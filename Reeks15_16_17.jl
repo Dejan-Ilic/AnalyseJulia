@@ -180,7 +180,11 @@ end
 		testcases(f,g,c) 
 	end
 	
-	md"Interactieve oefeningen Julia. Respecteer bij alle oefeningen de naamgeving zodat de automatische verbetering functioneert. Omdat er bij sommige oefeningen meerdere manieren mogelijk zijn om tot een oplossing te komen, werkt de automatische verbetering daar aan de hand van een aantal *testcases*. Je kan je oplossing ook steeds vergelijking met de oplossing die wij achter de schermen gebruiken door op het oogje te klikken naast de relevante blokken."
+	md"Interactieve oefeningen Julia. Respecteer bij alle oefeningen de naamgeving zodat de automatische verbetering functioneert. Omdat er bij sommige oefeningen meerdere manieren mogelijk zijn om tot een oplossing te komen, werkt de automatische verbetering daar aan de hand van een aantal *testcases*. Je kan je oplossing ook steeds vergelijking met de oplossing die wij achter de schermen gebruiken door op het oogje te klikken naast de relevante blokken.
+	
+Ten slotte raden we je aan om zo veel mogelijk cell bij te maken (door op de plus tussen twee cellen te klikken) om in te experimenteren. Let wel, dit is een grote notebook, met vele voorgedefinieerde variabelen. Als je een variabele maakt met dezelfde naam als een reeds bestaande variabele zul je een error krijgen. Wees dus creatief met de naamgeving van eigen variabelen, of plaats je code binnen een `let ... end` blok.
+	
+	"
 end
 
 # ╔═╡ 4c9353e0-982d-49c2-b45a-28a910b1489b
@@ -418,14 +422,14 @@ function curt(a)
 end
 
 # ╔═╡ 01b62f90-8bca-4b89-a702-59a31118ff3e
-let 
+begin 
 	function curt_corr(a)
-		x = a < 0 ? -0.5 : 0.5 #kies startwaarde
+		x = a < 0 ? -0.5 : 0.5 #kies startwaarde (we willen niet door 0 delen)
 	
 		f(t) = t^3 - a #compacte function definitie
 		df(t) = 3*t^2
 
-		for i=1:1000 #maximaal 1000 iteraties
+		for i=1:100 #maximaal 1000 iteraties
 
 			x = x - f(x)/df(x)
 			if abs(x^3 - a) <= 10e-5
@@ -437,7 +441,7 @@ let
 	end
 	
 	function curt_ingebouwd(a) #een beetje valsspelen om de echte antwoorden te krijgen
-		return round(Int, sign(a) * (abs(a)^(1/3)))
+		return cbrt(a)
 	end
 	
 	testcases(curt, curt_ingebouwd, [k^3 for k=[collect(-4:-1); collect(1:4)]], (x,y) ->(abs( (typeof(x) <: Real ? x : 0) - y) < 0.00001))
@@ -456,7 +460,7 @@ function integraal(N)
 end
 
 # ╔═╡ 412d4f34-6491-48f3-8dc0-f1d909e0d1a5
-let
+begin
 	function integraal_corr(N)
 		f(t) = exp(t^2)
 		return 1/N * sum( f(n/N) for n =0:N-1)
@@ -668,37 +672,190 @@ $$\left[\begin{array}{ccccc}
 \end{array}\right]$$"
 
 # ╔═╡ aabab6cc-383d-4abd-8a8b-83a98e9c6705
-
+#code
 
 # ╔═╡ bfd3d486-2011-4d57-b0d9-b418563c4714
 #test je code hier
 
+# ╔═╡ 7a741b0a-f3ff-48c4-9931-f59e5b8456a3
+let
+	function ruit_corr(n)
+		center = (n+1)÷2 #\div<TAB> om ÷ te krijgen, gehele deling
+		z = zeros(Int, n,n)
+		z[center, 1:n] .= 1
+		
+		w = 1
+		for k=1:(n-1)÷2
+			z[k, center-(k-1) : center+(k-1)] .= 1
+			z[n+1-k, center-(k-1) : center+(k-1)] .= 1
+		end
+		return z
+	end
+	md"Open deze cel om de oplossing te bekijken."
+end
+
 # ╔═╡ e5866311-89a3-4262-914c-9efb5e31b89a
 md"###### Oefening 17.2 a)
 Schrijf een functie `SolveLT(L, b)` die het stelsel ``Lx=b`` oplost waarbij ``L`` een vierkante onderdriehoeksmatrix is."
+
+# ╔═╡ a4294f7b-b52b-4bda-84cc-c1910971e6a2
+md"De volgende cel maakt een onderdriehoeksmatrix `L` en een vector `b` aan waarop je kan experimenteren."
+
+# ╔═╡ 7773fc81-c832-4afa-b7d6-997706716f24
+begin
+	b = rand(3)
+	
+	L = rand(3,3)
+	L[1, 2:3] .= 0
+	L[2, 3] = 0
+	
+	L, b
+end
+
+# ╔═╡ 09e5c19e-385d-4354-a9be-269bd9fbd049
+md"De volgende cel demonstreert hoe je de ingebouwde solver van Julia kunt gebruiken."
+
+# ╔═╡ a715f3a6-a360-4cd2-93ef-21662be22739
+x_solution = L\b #de ingebouwde oplossing, equivalent aan x = L^(-1) * b
+
+# ╔═╡ b8f3080b-b046-42ca-b6b5-29c79fcfb817
+md"En de oplossing klopt inderdaad, op een factor ``10^{-16}`` of `...e-16` na, i.e. de machineprecisie."
+
+# ╔═╡ f66dfc98-c7ae-45b2-a9ed-b5fd4239b2d7
+L*x_solution - b #we vullen x in in de formule
+
+# ╔═╡ 16343792-a4b8-41c0-b3db-f629ed5be806
+md"Voor we onze Solver kunnen schrijven, bekijken we hoe *slicing* precies werkt in Julia. Daarvoor definiëren we eerst een testmatrix `V` en een vector `w`"
+
+# ╔═╡ 8e6acd9a-033d-4f2b-a104-7b20057cefee
+V = [1 2 3; 4 5 6; 7 8 9]
+
+# ╔═╡ 2112c056-1c91-43ce-9199-9ae323d5b8d7
+ w = [1 2 3]
+
+# ╔═╡ 4c1b4b76-93b1-429b-8d22-a6b53f13ed0e
+md"Als we bijvoorbeeld de derde kolom uit `V` halen met slicing, dan krijgen we zoals verwacht een ``3\times 1`` kolomvector."
+
+# ╔═╡ 36bec4cf-070d-4b02-a1eb-c8289bca57b3
+V[1:3, 3]
+
+# ╔═╡ cc4df090-d8cb-4e70-8f07-e5e58d49bccd
+md"Maar als we de tweede rij uit `V` halen met slicing, dan krijgen we opnieuw een ``3 \times 1`` kolomvector."
+
+# ╔═╡ 909be01f-6e11-4b9d-97b3-b5fa68c085cc
+V[2, 1:3]
+
+# ╔═╡ 57e55b37-f26f-403e-bbe9-c42501bfa631
+md"Dit gedrag is in sommige gevallen natuurlijk ongewenst. Om toch een rijvector te krijgen, slicen we ook in de eerst index:"
+
+# ╔═╡ 0002d095-e1c5-4d59-a812-85a7ccc41ec1
+V[2:2, 1:3]
+
+# ╔═╡ 3d09b315-1f79-47a1-92a1-f9d88930d723
+md"Nu we een ``1\times 3`` en een ``3 \times 1`` vector hebben, kunnen we natuurlijk matrixvermenigvuldiging toepassen:"
+
+# ╔═╡ 0a42cfe2-c271-45b4-884b-cc96dd22d943
+V[2:2, 1:3] * V[1:3, 3]
+
+# ╔═╡ 8463db13-2be8-4510-bc3a-72fea0242c75
+md"Merk op dat het resultaat van de (juiste) vermenigvuldiging een ``1\times 1`` vector is, en dus geen scalair!
+
+Dat betekent dat `w[1] = V[2:2, 1:3] * V[1:3, 3]` een error zou geven: het linkerlid is een scalair, terwijl het rechterlid een vector is! De oplossing is om ook van het linkerlid een vector te maken:"
+
+# ╔═╡ a14b5a59-5589-4928-8647-89a60447a00a
+w[1:1] = V[2:2, 1:3] * V[1:3, 3]
+
+# ╔═╡ 59bdf22b-5a85-4ac0-a06e-c8a31bcc922d
+w
+
+# ╔═╡ 16972c3e-d3c2-4698-b7c0-4a08de7b33ce
+md"Merk ook op dat `V[2, 1:3] * V[1:3, 3]` een error zou geven aangezien je geen ``3 \times 1`` vector met een andere ``3 \times 1`` vector kunt vermenigvuldigen."
+
+# ╔═╡ 8fb74a68-7127-47e0-a625-a8464bff2444
+md"Met de voorgaande opmerkingen in het achterhoofd zijn we klaar om de `SolveLT` functie correct op te stellen."
 
 # ╔═╡ 19ea3eeb-26f1-47b5-8125-a14e9d5780ef
 function SolveLT(L, b)
 	
 end
 
+# ╔═╡ 5f59399a-657c-4127-ab12-823bca02ec6f
+#vergelijk SolveLT(L, b) met x_solution om na te gaan of je oplossing correct is
+
 # ╔═╡ 5c608409-259e-4044-898e-3af2570c2df1
 let
+	function SolveLT_corr1(L, b)
+		n = size(L,1)
+		x = zeros(n, 1)
+
+		x[1] = b[1]/L[1,1]
+		for k=2:n
+			x[k] = (b[k] - sum(L[k, 1:k-1] .* x[1:k-1]))/L[k,k]
+		end
+		return x
+	end
+
+	function SolveLT_corr2(L, b)
+		n = size(L,1)
+		x = zeros(n, 1)
+
+		x[1] = b[1]/L[1,1]
+		for k=2:n
+			#L[k:k, 1:k-1] heeft k:k nodig om 1x(k-1) vorm te behouden
+			#L[k, 1:k-1] wordt door Julia naar een (k-1)x1 vector geconverteerd
+			x[k:k] = (b[k:k] - L[k:k, 1:k-1] * x[1:k-1])/L[k,k]
+			#ook b[k:k] moet een 1x1 matrix blijven, b[k] is namelijk een scalair
+			#In corr3 lossen we dit op door .- te gebruiken
+		end
+		return x
+	end
 	
+	function SolveLT_corr3(L, b)
+		n = size(L,1)
+		x = zeros(n, 1)
+
+		x[1] = b[1]/L[1,1]
+		for k=2:n
+			x[k:k] = (b[k] .- (L[k:k, 1:k-1] * x[1:k-1]))/L[k,k]
+		end
+		return x
+	end
+	
+	md"Open deze cel om de oplossing te bekijken."
 end
 
 # ╔═╡ f036f013-9658-4c90-8a11-a20e2f97c8e6
 md"###### Oefening 17.2 b)
-Schrijf een functie `SolveUT(U, b)` die het stelsel ``Ux=b`` oplost waarbij ``U`` een vierkante bovendriehoeksmatrix is."
+Schrijf een functie `SolveUT(U, b)` die het stelsel ``Ux=b`` oplost waarbij ``U`` een vierkante bovendriehoeksmatrix is. Om je implementatie te testen kan je opnieuw gebruik maken van de vector `b` en de bovendriehoeksmatrix `U` stellen we gelijk aan de getransponeerde van `L`:"
+
+# ╔═╡ 58a3c497-c6b5-4c74-acfe-2b85902695fe
+U = L'
 
 # ╔═╡ 0579056b-c79b-4682-84f0-4aa64a96b58b
 function SolveUT(U, b)
 	
 end
 
+# ╔═╡ 90194342-b00b-494e-a6bc-0220b890ae71
+#vergelijk oplossing met model oplossing
+
+# ╔═╡ 4043b0d8-58aa-4a84-83c3-cb70c8a7b517
+U\b #modeloplossing
+
 # ╔═╡ a09cd03c-93c1-41b6-9767-507dce6707c2
 let
+	function SolveLT_corr3(U, b)
+		n = size(U,1)
+		x = zeros(n, 1)
+
+		x[n] = b[n]/U[n, n]
+		for k=n-1:-1:1
+			x[k:k] = (b[k] .- (U[k:k, (k+1):n] * x[(k+1):n]))/U[k,k]
+		end
+		return x
+	end
 	
+	md"Open deze cel om de oplossing te bekijken."
 end
 
 # ╔═╡ 4b8181c7-a6fb-4655-956b-c7579ce283c4
@@ -711,7 +868,7 @@ $$TF = \frac{9}{5}TC + 32$$"
 #definitie
 
 # ╔═╡ 85cd8816-3ef3-421f-9b1b-a53c11b52c51
-let
+begin
 	omzetting_corr(TC) = 9/5 * TC + 32;
 	md"Open deze cel om de oplossing te bekijken."
 end
@@ -723,6 +880,22 @@ Maak een tabel voor de omzetting van 0°C t.e.m. 100°C."
 # ╔═╡ 009120ad-13c0-49fd-9ac0-918c28937044
 #tabel
 
+# ╔═╡ 40676469-fc46-4c80-ba3d-396a6cd168ee
+begin
+	function maaktabel_corr(stapgrootte)
+		celcius = 0:stapgrootte:100
+		tabel = zeros(Int, length(celcius), 2)
+		
+		for k=1:length(celcius)
+			tabel[k,1] = celcius[k]
+			tabel[k,2] = omzetting_corr(celcius[k])
+		end
+		
+		return tabel
+	end
+	md"Open deze cel om de oplossing te bekijken."
+end
+
 # ╔═╡ 8843815f-09bd-4cbe-8892-454cf2c036e4
 md"###### Oefening 17.3 c) 
 Plot de functie `omzetting` van `0` tot `100`."
@@ -730,19 +903,39 @@ Plot de functie `omzetting` van `0` tot `100`."
 # ╔═╡ 6e985588-6f26-4da2-a5d1-3b736acc94f0
 #plot
 
+# ╔═╡ ac761fcb-9f5a-48e4-92a2-76405fadd4b1
+begin
+	function plottabel_corr(stapgrootte)
+		tabel = maaktabel_corr(stapgrootte)
+		plot(tabel[:,1], tabel[:,2], framestyle=:origin)
+	end
+	md"Open deze cel om de oplossing te bekijken."
+end
+
 # ╔═╡ be5b83b7-17f4-42bd-aa1d-2aba45046feb
 md"###### Oefening 17.4 a)
-Schrijf een functie `plotgauss(begin, einde, stap)` die de gausskromme
+Schrijf een functie `plotgauss(start, einde, stap)` die de gausskromme
 
 $$f(x) = e^{-\frac{x^2}{2}}$$
 
-plot tussen het opgegeven interval met de opgegeven precisie."
+plot tussen het opgegeven interval, i.e. `[start, einde]`, met de opgegeven precisie, i.e. `stap`."
 
 # ╔═╡ e47d8341-d15e-4daf-b48d-396bab9cf094
 #functie
 
 # ╔═╡ 0c8f6b43-5af9-4627-9750-56533bc4c7d6
 #test
+
+# ╔═╡ d70ed61e-9abd-42b5-a458-56bacfab0627
+begin
+	function plotgauss_corr(start, einde, stap)
+		x = start:stap:einde
+		y = @. exp(-x^2/2) #alternatief: exp.(-x.^2/2)
+		
+		plot(x, y)
+	end
+	md"Open deze cel om de oplossing te bekijken."
+end
 
 # ╔═╡ 79ed86dd-224f-4f87-9e1b-f5784b1f2195
 md"###### Oefening 17.4 b)
@@ -755,7 +948,7 @@ Schrijf een tweede functie `raaklijngauss(a)` die de raaklijn aan de gausskromme
 #test
 
 # ╔═╡ c51d9046-95ef-49d5-a169-65a56036502b
-let
+begin
 	function raaklijngauss_corr(a)
 		
 	end
@@ -764,7 +957,9 @@ end
 
 # ╔═╡ 66941cc9-cd14-45ef-a821-2bd803cc78da
 md"###### Oefening 17.5 
-Schrijf een programma `plotcurt(a)` dat de methode van Newton grafisch voorstelt zoals toegepast in oefening 15.7, voor het programma `curt(a)`."
+Schrijf een programma `plotcurt(a)` dat de methode van Newton grafisch voorstelt zoals toegepast in oefening 15.7, voor het programma `curt(a)`. Je zult je functie `curt` waarschijnlijk moeten herschrijven als `curt(a, n)` waarbij `n` het aantal stappen is. De nieuwe functie `curt(a, n)` heeft dan als return waarde een lijst van lengte `n`. Merk op dat `curt(a)` en `curt(a,n)` tegelijk kunnen bestaan. Julia kan de twee methoden uit elkaar houden omdat de ene 1 argument aanneemt en de andere twee. We zeggen dat de **functie** `curt` twee **methoden** heeft. In andere programmeertalen noemen we dit ook wel *overloaden* van functies.
+
+Je kan eerst de derde wortel functie plotten met `plot` en er dan de benaderende punten over plotten door `scatter!` te gebruiken."
 
 # ╔═╡ de6cdaf8-cd42-4186-88dd-8a8568b141d4
 #definitie
@@ -773,15 +968,41 @@ Schrijf een programma `plotcurt(a)` dat de methode van Newton grafisch voorstelt
 #test
 
 # ╔═╡ ae00fcbb-b1dc-46a7-8bf9-cbc3b06b41e1
-let
-	function plotcurt_corr(a)
-	
+begin
+	function curt_corr(a, n)
+		x = zeros(n)
+		x[1] = a > 0 ? 0.5 : -0.5
+		
+		
+		f(t) = t^3 - a 
+		df(t) = 3*t^2
+		
+		
+		for k=2:n
+			x[k] = x[k-1] - f(x[k-1])/df(x[k-1])
+		end
+		
+		return x
 	end
+	
+	function plotcurt_corr(a)
+		x = curt_corr(a, 10)
+		t = LinRange(min(a-2, minimum(x)), max(a+2, maximum(x)), 100)
+		
+		plot(t, cbrt.(t), framestyle=:origin)
+		scatter!(x, cbrt.(x), series_annotations = text.(1:length(x), :bottom))
+	end
+	
+	#probeer bijvoorbeeld      plotcurt_corr(1000)
+		
+		
+		
 	md"Open deze cel om de oplossing te bekijken."
 end
 
 # ╔═╡ e37e343a-6161-4ed1-9e13-425afaed4046
-md"Definieer de functie
+md"###### Oefening 17.6 
+Definieer de functie
 
 $$s(x) = \frac{x - \sin(x)}{x^3}$$
 
@@ -797,7 +1018,9 @@ Bereken achtereenvolgens `s(0.01)`, `s(0.001)`, `s(0.0001)` en `s(0.00001)` en p
 #plot
 
 # ╔═╡ 35debdb4-f14a-47ea-8b6c-b1d37026e1f1
-let 
+begin
+	s_corr(x) = (x - sin(x))/x^3
+	#plot(LinRange(-3,3,100), s_corr.(LinRange(-3, 3, 100)), framestyle=:origin)
 	md"Open deze cel om de oplossing te bekijken."
 end
 
@@ -813,14 +1036,21 @@ en bereken de eerst 10 machten van `P`. Controleer welke macht van `A` mogelijk 
 # ╔═╡ f612a493-0387-48b5-bce0-4a00bbfd2b87
 
 
+# ╔═╡ f4681713-285d-4b13-a88d-ee824594bb29
+
+
 # ╔═╡ da6a8303-dfd7-4e39-8667-99f56037ce17
-
-
-# ╔═╡ 21d0a957-1bac-4fd9-aa26-1389c3cd6a2a
-
-
-# ╔═╡ 9b53b6ca-7751-40b7-8b92-1af6275b6cac
-
+begin
+	P_corr = [1 2 0; 0 1 2; 2 0 1]
+	function maxPpower_corr(P)
+		p = 1
+		while maximum(P^p) < 10^6 && p < 100 #oneindige lus voorkomen
+			p += 1
+		end
+		return p
+	end
+	md"Open deze cel om de oplossing te bekijken."
+end
 
 # ╔═╡ Cell order:
 # ╟─3518a9c4-1e79-4614-9a4e-6a8eb1989a5c
@@ -897,40 +1127,69 @@ en bereken de eerst 10 machten van `P`. Controleer welke macht van `A` mogelijk 
 # ╠═52207a3e-7894-4606-afd6-3c757cdf6646
 # ╟─38a65bfd-00a7-4aad-b924-9eaca5132939
 # ╟─c569b18f-b902-4d5d-abe3-5ce54f1316e4
-# ╠═008339f1-267e-4d08-bf61-c5f43633e1d5
+# ╟─008339f1-267e-4d08-bf61-c5f43633e1d5
 # ╠═aabab6cc-383d-4abd-8a8b-83a98e9c6705
 # ╠═bfd3d486-2011-4d57-b0d9-b418563c4714
-# ╠═e5866311-89a3-4262-914c-9efb5e31b89a
+# ╟─7a741b0a-f3ff-48c4-9931-f59e5b8456a3
+# ╟─e5866311-89a3-4262-914c-9efb5e31b89a
+# ╟─a4294f7b-b52b-4bda-84cc-c1910971e6a2
+# ╠═7773fc81-c832-4afa-b7d6-997706716f24
+# ╟─09e5c19e-385d-4354-a9be-269bd9fbd049
+# ╠═a715f3a6-a360-4cd2-93ef-21662be22739
+# ╟─b8f3080b-b046-42ca-b6b5-29c79fcfb817
+# ╠═f66dfc98-c7ae-45b2-a9ed-b5fd4239b2d7
+# ╟─16343792-a4b8-41c0-b3db-f629ed5be806
+# ╠═8e6acd9a-033d-4f2b-a104-7b20057cefee
+# ╠═2112c056-1c91-43ce-9199-9ae323d5b8d7
+# ╟─4c1b4b76-93b1-429b-8d22-a6b53f13ed0e
+# ╠═36bec4cf-070d-4b02-a1eb-c8289bca57b3
+# ╟─cc4df090-d8cb-4e70-8f07-e5e58d49bccd
+# ╠═909be01f-6e11-4b9d-97b3-b5fa68c085cc
+# ╟─57e55b37-f26f-403e-bbe9-c42501bfa631
+# ╠═0002d095-e1c5-4d59-a812-85a7ccc41ec1
+# ╟─3d09b315-1f79-47a1-92a1-f9d88930d723
+# ╠═0a42cfe2-c271-45b4-884b-cc96dd22d943
+# ╟─8463db13-2be8-4510-bc3a-72fea0242c75
+# ╠═a14b5a59-5589-4928-8647-89a60447a00a
+# ╠═59bdf22b-5a85-4ac0-a06e-c8a31bcc922d
+# ╟─16972c3e-d3c2-4698-b7c0-4a08de7b33ce
+# ╟─8fb74a68-7127-47e0-a625-a8464bff2444
 # ╠═19ea3eeb-26f1-47b5-8125-a14e9d5780ef
-# ╠═5c608409-259e-4044-898e-3af2570c2df1
-# ╠═f036f013-9658-4c90-8a11-a20e2f97c8e6
+# ╠═5f59399a-657c-4127-ab12-823bca02ec6f
+# ╟─5c608409-259e-4044-898e-3af2570c2df1
+# ╟─f036f013-9658-4c90-8a11-a20e2f97c8e6
+# ╠═58a3c497-c6b5-4c74-acfe-2b85902695fe
 # ╠═0579056b-c79b-4682-84f0-4aa64a96b58b
-# ╠═a09cd03c-93c1-41b6-9767-507dce6707c2
-# ╠═4b8181c7-a6fb-4655-956b-c7579ce283c4
+# ╠═90194342-b00b-494e-a6bc-0220b890ae71
+# ╠═4043b0d8-58aa-4a84-83c3-cb70c8a7b517
+# ╟─a09cd03c-93c1-41b6-9767-507dce6707c2
+# ╟─4b8181c7-a6fb-4655-956b-c7579ce283c4
 # ╠═0c68d669-9f95-4d82-b05d-babb6a68f465
-# ╠═85cd8816-3ef3-421f-9b1b-a53c11b52c51
-# ╠═a3a513df-f407-4896-984d-c544206d4eab
+# ╟─85cd8816-3ef3-421f-9b1b-a53c11b52c51
+# ╟─a3a513df-f407-4896-984d-c544206d4eab
 # ╠═009120ad-13c0-49fd-9ac0-918c28937044
+# ╟─40676469-fc46-4c80-ba3d-396a6cd168ee
 # ╠═8843815f-09bd-4cbe-8892-454cf2c036e4
 # ╠═6e985588-6f26-4da2-a5d1-3b736acc94f0
-# ╠═be5b83b7-17f4-42bd-aa1d-2aba45046feb
+# ╟─ac761fcb-9f5a-48e4-92a2-76405fadd4b1
+# ╟─be5b83b7-17f4-42bd-aa1d-2aba45046feb
 # ╠═e47d8341-d15e-4daf-b48d-396bab9cf094
 # ╠═0c8f6b43-5af9-4627-9750-56533bc4c7d6
-# ╠═79ed86dd-224f-4f87-9e1b-f5784b1f2195
+# ╟─d70ed61e-9abd-42b5-a458-56bacfab0627
+# ╟─79ed86dd-224f-4f87-9e1b-f5784b1f2195
 # ╠═3e22c469-9054-4899-808a-b2c417d37859
 # ╠═e538e97c-a75c-4c7a-9d66-a2feda0d71bd
-# ╠═c51d9046-95ef-49d5-a169-65a56036502b
-# ╠═66941cc9-cd14-45ef-a821-2bd803cc78da
+# ╟─c51d9046-95ef-49d5-a169-65a56036502b
+# ╟─66941cc9-cd14-45ef-a821-2bd803cc78da
 # ╠═de6cdaf8-cd42-4186-88dd-8a8568b141d4
 # ╠═02bd929b-cc0f-4986-a843-a123c9d657c2
-# ╠═ae00fcbb-b1dc-46a7-8bf9-cbc3b06b41e1
-# ╠═e37e343a-6161-4ed1-9e13-425afaed4046
+# ╟─ae00fcbb-b1dc-46a7-8bf9-cbc3b06b41e1
+# ╟─e37e343a-6161-4ed1-9e13-425afaed4046
 # ╠═8bdcef66-5e66-40ef-9526-12fe58df2254
 # ╠═868e5192-1989-4382-ba42-d70c96ce4d55
 # ╠═3d30ab38-fc39-45b6-a379-b3de6238dd58
-# ╠═35debdb4-f14a-47ea-8b6c-b1d37026e1f1
-# ╠═200b252f-b222-4e92-b1bc-bd6cfca9d7e9
+# ╟─35debdb4-f14a-47ea-8b6c-b1d37026e1f1
+# ╟─200b252f-b222-4e92-b1bc-bd6cfca9d7e9
 # ╠═f612a493-0387-48b5-bce0-4a00bbfd2b87
-# ╠═da6a8303-dfd7-4e39-8667-99f56037ce17
-# ╠═21d0a957-1bac-4fd9-aa26-1389c3cd6a2a
-# ╠═9b53b6ca-7751-40b7-8b92-1af6275b6cac
+# ╠═f4681713-285d-4b13-a88d-ee824594bb29
+# ╟─da6a8303-dfd7-4e39-8667-99f56037ce17
