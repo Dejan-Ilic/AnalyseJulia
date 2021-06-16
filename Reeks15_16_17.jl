@@ -14,9 +14,9 @@ md"# Oefeningen Julia II"
 #installatie, enkel nodig als de vorige cel een error gaf. Verwijder wel eerst de commentaren.
 #begin
 #	using Pkg
-#	Pkg.add("Random")
-#	Pkg.add("LinearAlgebra")
+
 #	Pkg.add("Plots")
+#	using Plots
 #end
 
 # ╔═╡ 7b432c3d-1cfe-4695-97c0-782205762f7c
