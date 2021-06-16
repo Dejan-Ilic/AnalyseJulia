@@ -8,7 +8,7 @@ using InteractiveUtils
 using LinearAlgebra, Random, Plots #de extra Packages die je nodig hebt om deze notebook uit te kunnen voeren
 
 # ╔═╡ 3518a9c4-1e79-4614-9a4e-6a8eb1989a5c
-md"# Oefeningen Julia"
+md"# Oefeningen Julia II"
 
 # ╔═╡ b4d1835d-4d98-43e0-bbe9-f4703ce01522
 #installatie, enkel nodig als de vorige cel een error gaf. Verwijder wel eerst de commentaren.
@@ -200,7 +200,7 @@ begin
 	G_corr[1:3, 1] = D_corr[2:4, 2]
 	G_corr[1:3, 2] = D_corr[2:4, 3]
 	G_corr[5, 2] = 2
-	G_corr[1:3, 3:5] = diagm(f_corr')
+	G_corr[1:3, 3:5] = diagm(f_corr') #diagm(vec([8 14 20]) of diagm([8,14,20]) ook
 	G_corr[4:5, 1:2] = diagm([2,2])
 	
 	h_corr = det(G_corr)
@@ -1076,7 +1076,7 @@ end
 # ╠═223c6778-0eda-4170-ada7-10ca5181d9e3
 # ╠═4c9353e0-982d-49c2-b45a-28a910b1489b
 # ╠═d5802fea-96d6-4c4e-8433-0ac487338b43
-# ╟─8abe9956-cd72-4200-aee1-1d7257bb0ae8
+# ╠═8abe9956-cd72-4200-aee1-1d7257bb0ae8
 # ╟─2d36128a-236a-419b-97f0-375a4d1fdf47
 # ╠═ef585606-af09-4f8c-a310-7bd5b1507bf4
 # ╟─2c38594b-d0bf-4a68-905c-a6a1bcaa5b5b
