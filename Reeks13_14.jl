@@ -151,25 +151,6 @@ end
 # ╔═╡ 2e821c0e-39fd-4bd4-a5bc-b746057581aa
 md"In de definitie van `f_lang` gebruiken we slechts 1 keer return om te illustreren dat het gebruik van het *keyword* `return` optioneel is. Indien er geen return statement in een functie staat, geeft Julia als return-waarde de laatste expressie uit de functie, in dit geval `sin(x) + exp(x)`"
 
-# ╔═╡ bfbfc377-0f11-4f86-8f30-1737f98b82c8
-md"#### Plotten
-De `plot` functie is geen onderdeel van de Julia standaard bibliotheek. Daarom moeten we de `Plots` package installeren en importeren. Daarom importeren we eerst de `Pkg` package. Dat is de package om andere packages mee te installeren, zoals Internet Explorer de browser is waarmee je andere browsers installeert."
-
-# ╔═╡ 96bb54fd-cced-42ae-bc9a-2935617ffe48
-md"Voer de code in de onderstaande cel uit om `Plots` te installeren. In de daaropvolgende cel proberen we `Plots` al te importeren. Merk op dat dit een error oplevert. Merk ook op dat de error ons de juiste oplossing suggereert."
-
-# ╔═╡ a2bddf16-b6c3-4b09-9729-1ec6e7b1f073
-#Pkg.add("Plots")
-
-# ╔═╡ ca2b793d-e1de-49d1-9eaf-dad22916f433
-md"TODO"
-
-# ╔═╡ ffa0ff53-4088-4e32-9c84-5e8997db6f5e
-
-
-# ╔═╡ 0e72912f-c662-411a-81c0-4f0afd323f4a
-
-
 # ╔═╡ 0c226ac3-b287-44f7-b8b9-dfdee33f1664
 md"#### Vectoren, Matrices en Arrays
 In Julia is een Vector een ``N\times 1`` Matrix, en een Matrix is een ``N\times M`` Array. 
@@ -204,6 +185,24 @@ M = [1 2 3 4; 5 6 7 8]
 # ╔═╡ a6e03bc3-5dbc-4dca-9a99-94d6c76e86af
 typeof(M)
 
+# ╔═╡ 8c4f7bf5-3425-4d65-a074-252eeaffec6b
+md"Met de functie `size` kunnen we de grootte van een Array bepalen. De return-waarde is van het type `Tuple`."
+
+# ╔═╡ 2873b7ed-730d-413d-be83-b5ac87890a59
+size(v1)
+
+# ╔═╡ be2a71b3-fdd8-4418-989c-c9fa45fad226
+size(v2)
+
+# ╔═╡ 5b04b4bb-d8dd-437b-bf29-d0d38ad8e9c5
+size(M)
+
+# ╔═╡ 1bd9328e-52a1-4be6-a5c8-fe579f067f45
+size(M, 2) #aantal rijen van M
+
+# ╔═╡ d25571ac-f9b7-486e-a24d-ad3c66d971f1
+md"Met de functie `length` kunnne we het aantal elementen in een Array
+
 # ╔═╡ 0b3c812a-a8bf-48ba-96a7-694647cdd3c9
 md"Natuurlijk kunnen we matrices en vectoren met elkaar vermenigvuldigen"
 
@@ -234,13 +233,106 @@ md"Probeer ook twee vectoren puntsgewijs te delen en te exponentiëren, i.e. `ve
 # ╔═╡ 9d1139bd-3c58-4e5e-a09f-e88cc02a3a28
 #probeer zelf
 
-# ╔═╡ 7a8ab28c-7d9e-4e43-91bd-38ade4cf77ed
-
-
 # ╔═╡ 16a4cb60-3cfa-4f50-b0a1-f782252b1556
 md"Dit werkt natuurlijk ook met matrices. Probeer `M` puntsgewijs met zichzelf te vermenigvuldigen."
 
 # ╔═╡ cd1aa28d-ecc4-47cc-8d0c-074e68f699b3
+#puntsgewijs
+
+# ╔═╡ cf62badc-4828-474e-9be3-69f46caad71f
+md"Matrices en vectoren indexeren we met vierkante haakjes. Om het ``i``de element van de ``3\times 1`` Vector `w1` op te vragen, gebruiken we `w1[i]`"
+
+# ╔═╡ 6a64f91d-fc6e-4e2b-89fe-29888d6595c5
+w1 = [7, 8, 9]
+
+# ╔═╡ 07a585b7-65dd-4209-85e4-8e3442ac0160
+#vraag het tweede element van w1 op in deze cel
+
+# ╔═╡ 6ab7e445-beb5-4c09-99b2-aed428017b59
+md"Om het element op positie ``ij`` in een `M\times N`` matrix `U` op te vragen, gebruiken we `U[i,j]`:"
+
+# ╔═╡ c9ca7dcb-9e80-4d91-bf92-cc23b2e4558f
+U = [1 2 3 4; 5 6 7 8; -9 -8 -7 -6; -5 -4 -3 -2]
+
+# ╔═╡ 8c286d60-1a84-4411-82ca-59ed605a40c3
+#Bepaal het element op positie 3,4 in U
+
+# ╔═╡ 6a095ac0-ef7f-484c-95ce-70d05a954598
+md"Om het element op positie ``j`` op te vragen in een ``1\times N`` rijvector `w2`, zouden we eigenlijk `w2[1, j]` moeten schrijven aangezien `w2` door Julia als Matrix beschouwd wordt. In dit speciale geval werkt `w2[i]` ook."
+
+# ╔═╡ ee01eda9-f9c2-472b-b7c0-6e2268e6b6d9
+w2 = [-2 8 9]
+
+# ╔═╡ 89e98a65-2190-47ec-9291-78152254bd15
+#bepaal het derde element van w2
+
+# ╔═╡ b6e1919e-67f3-4111-8a22-7a8e5f3391e3
+md"#### Slicing
+Vaak zijn we gegeven een matrix `W` geïnteresseerd in een bepaalde submatrix van `W`. In Julia kunnen we de elementen van kolom `k1` t.e.m. `k2` en van rij `r1` t.e.m. `r2` opvragen via de uitdrukking `W[r1:r2, k1:k2]`.
+
+Voer nu de matrix `W` in:
+
+$$W = \left[\begin{array}{cccc} 2&3&-3&2\\1&1&-1&-1\\6&7&8&9\\-4&2&2&-4\end{array}\right]$$"
+
+# ╔═╡ 2f44e545-1c6d-40de-a672-5b74ee6668c1
+W = [2 3 -3 2; 1 1 -1 -1; 6 7 8 9; -4 2 2 -4]
+
+# ╔═╡ 4ee457f7-363c-4e3f-9672-06cbc0c5149e
+md"Bepaal de submatrix van rij 1 t.e.m rij 3 en van kolom 3 t.e.m. kolom 4."
+
+# ╔═╡ 88ef2a42-d141-442a-9a2c-dc8101488ea0
+#submatrix
+
+# ╔═╡ 51b03a13-3577-4838-8786-cbeecd2031be
+md"Let wel op de volgende regels: (als je `W` nog niet correct hebt ingevoerd, zul je hier errors te zien krijgen)"
+
+# ╔═╡ 6a30d20e-3b97-45c3-95e1-c475e645b716
+W[2,2] #een scalair
+
+# ╔═╡ abf65b18-3d4d-4c3a-ae67-d9493ff38845
+W[2:2, 2:2] #een 1x1 matrix
+
+# ╔═╡ 95b14d2c-d4d6-416f-a419-795e617b7996
+W[2:2, 2] #een 1x1 vector
+
+# ╔═╡ 3a812e19-acf8-4b56-ae8a-371d1feb456a
+W[2, 2:2] #een 1x1 vector
+
+# ╔═╡ 4b96e09f-e9b0-4551-816d-d930b497deba
+md"Merk op dat als we een rijvector uit de matrix `W` *slicen*, we een kolomvector krijgen. Met andere woorden: we verwachten een ``1 \times n`` `Matrix`, maar we krijgen een ``n \times 1`` `Vector`"
+
+# ╔═╡ 614a2f14-6a62-4255-8495-f6987dd7ead0
+W[1, 2:4] #een 3x1 Vector
+
+# ╔═╡ c0fbdac3-c250-4029-9ab6-70d8ea30aaa6
+md"Dat komt omdat Julia de slice voor ons vereenvoudigt. Als we willen dat de vorm behouden blijft, moeten we het volgende schrijven:"
+
+# ╔═╡ d956b439-dee4-4b51-a7b0-98fccd7bbf99
+W[1:1, 2:4] #een 1x3 Matrix
+
+# ╔═╡ 69d81a78-e94d-4bed-9a7b-b634041736a9
+md"En ten slotte hebben we de volgende syntactische suiker"
+
+# ╔═╡ a9f37ee3-45e7-4ae5-bdc6-449d871bead6
+W[3, :] #de hele derde rij
+
+# ╔═╡ 3fef6aca-e4f1-4f15-b013-4c42849da952
+W[:, 1] #de hele eerste kolom
+
+# ╔═╡ f5a5b028-6ed8-4651-8c5b-fc3eedef5d64
+W[1:end-1, 1] #de eerste kolom, zonder het laatste element
+
+# ╔═╡ bfbfc377-0f11-4f86-8f30-1737f98b82c8
+md"#### Plotten
+De `plot` functie is geen onderdeel van de Julia standaard bibliotheek. Daarom moeten we de `Plots` package installeren en importeren. Daarom importeren we eerst de `Pkg` package. Dat is de package om andere packages mee te installeren, zoals Internet Explorer de browser is waarmee je andere browsers installeert."
+
+# ╔═╡ 96bb54fd-cced-42ae-bc9a-2935617ffe48
+md"Voer de code in de onderstaande cel uit om `Plots` te installeren. In de daaropvolgende cel proberen we `Plots` al te importeren. Merk op dat dit een error oplevert. Merk ook op dat de error ons de juiste oplossing suggereert."
+
+# ╔═╡ a2bddf16-b6c3-4b09-9729-1ec6e7b1f073
+#Pkg.add("Plots")
+
+# ╔═╡ 7c581841-0ac6-4a42-8e3d-ecadfd325064
 
 
 # ╔═╡ 51645a3c-51b8-47a7-b2dc-2bcdd356ca37
@@ -295,14 +387,6 @@ md"## Reeks 14
 # ╠═94c4d137-cf34-4481-9a9d-0747e9a0d963
 # ╠═753d2408-7c51-41dc-8c4c-eb7e11f0d8bb
 # ╠═2e821c0e-39fd-4bd4-a5bc-b746057581aa
-# ╠═bfbfc377-0f11-4f86-8f30-1737f98b82c8
-# ╠═d6788779-fc9f-431c-b247-6f9da302fc00
-# ╠═96bb54fd-cced-42ae-bc9a-2935617ffe48
-# ╠═a2bddf16-b6c3-4b09-9729-1ec6e7b1f073
-# ╠═22410d92-2b7e-4a3f-8190-79b5562b4289
-# ╠═ca2b793d-e1de-49d1-9eaf-dad22916f433
-# ╠═ffa0ff53-4088-4e32-9c84-5e8997db6f5e
-# ╠═0e72912f-c662-411a-81c0-4f0afd323f4a
 # ╠═0c226ac3-b287-44f7-b8b9-dfdee33f1664
 # ╠═33d6b3e1-15aa-486a-9430-9cf50b770f89
 # ╠═5cacc4bf-5d33-4e34-a6cc-c29d4099c7a7
@@ -312,6 +396,12 @@ md"## Reeks 14
 # ╠═75e789f0-080d-47ab-9814-c42e544c8be5
 # ╠═cfeebf19-6524-4ab5-a785-59821858c154
 # ╠═a6e03bc3-5dbc-4dca-9a99-94d6c76e86af
+# ╠═8c4f7bf5-3425-4d65-a074-252eeaffec6b
+# ╠═2873b7ed-730d-413d-be83-b5ac87890a59
+# ╠═be2a71b3-fdd8-4418-989c-c9fa45fad226
+# ╠═5b04b4bb-d8dd-437b-bf29-d0d38ad8e9c5
+# ╠═1bd9328e-52a1-4be6-a5c8-fe579f067f45
+# ╠═d25571ac-f9b7-486e-a24d-ad3c66d971f1
 # ╠═0b3c812a-a8bf-48ba-96a7-694647cdd3c9
 # ╠═46f841eb-b35e-4095-b9eb-61538aa56ff8
 # ╠═7036709e-8cd3-43c8-9125-38a7aaecce19
@@ -322,9 +412,40 @@ md"## Reeks 14
 # ╠═de7c2a28-25b3-49d4-a848-6eced7a4afc2
 # ╠═0f57884d-9ebe-4354-a133-f4b9266565a5
 # ╠═9d1139bd-3c58-4e5e-a09f-e88cc02a3a28
-# ╠═7a8ab28c-7d9e-4e43-91bd-38ade4cf77ed
 # ╠═16a4cb60-3cfa-4f50-b0a1-f782252b1556
 # ╠═cd1aa28d-ecc4-47cc-8d0c-074e68f699b3
+# ╠═cf62badc-4828-474e-9be3-69f46caad71f
+# ╠═6a64f91d-fc6e-4e2b-89fe-29888d6595c5
+# ╠═07a585b7-65dd-4209-85e4-8e3442ac0160
+# ╠═6ab7e445-beb5-4c09-99b2-aed428017b59
+# ╠═c9ca7dcb-9e80-4d91-bf92-cc23b2e4558f
+# ╠═8c286d60-1a84-4411-82ca-59ed605a40c3
+# ╠═6a095ac0-ef7f-484c-95ce-70d05a954598
+# ╠═ee01eda9-f9c2-472b-b7c0-6e2268e6b6d9
+# ╠═89e98a65-2190-47ec-9291-78152254bd15
+# ╠═b6e1919e-67f3-4111-8a22-7a8e5f3391e3
+# ╠═2f44e545-1c6d-40de-a672-5b74ee6668c1
+# ╠═4ee457f7-363c-4e3f-9672-06cbc0c5149e
+# ╠═88ef2a42-d141-442a-9a2c-dc8101488ea0
+# ╠═51b03a13-3577-4838-8786-cbeecd2031be
+# ╠═6a30d20e-3b97-45c3-95e1-c475e645b716
+# ╠═abf65b18-3d4d-4c3a-ae67-d9493ff38845
+# ╠═95b14d2c-d4d6-416f-a419-795e617b7996
+# ╠═3a812e19-acf8-4b56-ae8a-371d1feb456a
+# ╠═4b96e09f-e9b0-4551-816d-d930b497deba
+# ╠═614a2f14-6a62-4255-8495-f6987dd7ead0
+# ╠═c0fbdac3-c250-4029-9ab6-70d8ea30aaa6
+# ╠═d956b439-dee4-4b51-a7b0-98fccd7bbf99
+# ╠═69d81a78-e94d-4bed-9a7b-b634041736a9
+# ╠═a9f37ee3-45e7-4ae5-bdc6-449d871bead6
+# ╠═3fef6aca-e4f1-4f15-b013-4c42849da952
+# ╠═f5a5b028-6ed8-4651-8c5b-fc3eedef5d64
+# ╠═bfbfc377-0f11-4f86-8f30-1737f98b82c8
+# ╠═d6788779-fc9f-431c-b247-6f9da302fc00
+# ╠═96bb54fd-cced-42ae-bc9a-2935617ffe48
+# ╠═a2bddf16-b6c3-4b09-9729-1ec6e7b1f073
+# ╠═22410d92-2b7e-4a3f-8190-79b5562b4289
+# ╠═7c581841-0ac6-4a42-8e3d-ecadfd325064
 # ╠═51645a3c-51b8-47a7-b2dc-2bcdd356ca37
 # ╠═9cd2914a-e540-4131-8606-3533aaa16887
 # ╠═7b766daf-f703-4dfd-a09c-c7439078574a
