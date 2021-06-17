@@ -506,13 +506,137 @@ end
 
 # ╔═╡ 7b766daf-f703-4dfd-a09c-c7439078574a
 md"## Reeks 14
-
+In deze reeks bekijken we een aantal voorbeeldprogramma's in Julia.
 "
 
 # ╔═╡ 0269c3bc-0c2e-4095-ac9b-af62429f74ec
+md"#### Elementaire functies en terminal output
+Het volgende programma demonstreert een aantal elementaire functies in Julia. Om de output van alle operaties te tonen, maken we gebruik van een `with_terminal() do ... end` blok, waarbinnen we de `println` functie gebruiken om resultaten weer te geven. In toekomstige versies van Pluto zal het weergeven van outputs met het `@info` macro gebeuren."
+
+# ╔═╡ 95996e61-4511-4fa9-88c6-a08b895359fa
+md"Als de volgende cel een error geeft, is dat omdat je `PlutoUI` nog niet hebt geïnstalleerd. `PlutoUI` is nodig om de terminal outputs weer te geven. Maak een nieuwe cel aan waarin je eerst `PlutoUI` installeert en vervolgens importeert."
+
+# ╔═╡ c6b4bdd7-8158-417c-92d6-5e1507228415
 
 
 # ╔═╡ 21a88921-8740-439e-8069-112d79014d2a
+with_terminal() do
+	println("sqrt(25) = ", sqrt(25))
+	println("cbrt(64) = ", cbrt(64))
+	println("exp(10) = ", exp(10))
+	println("log2(64) = ", log2(64))
+	println("log10(1000): ", log10(1000))
+	println("log(exp(4)): ", log(exp(4)))
+	println("conj(8 - 5im): ", conj(8 - 5im))
+	println("abs(3 + 4im): ", abs(3 + 4im))
+	println("angle(3 + 4im): ", angle(3 + 4im))
+	println("abs(3 + 4im) * exp(angle(3+4im)im): ", abs(3 + 4im) * exp(angle(3+4im)im))
+	println("24÷5 = ", 24÷5)
+	println("24/5 = ", 24/5)
+end
+
+# ╔═╡ 632d10c5-bd00-464d-bd56-8b899af525ef
+md"#### Matrix slicing en puntsgewijze assignments
+Het volgende programma definieert een matrix en manipuleert die vervolgens. Om alle stappen van het programma te begrijpen kun je opnieuw een `with_terminal()` blok gebruiken, of alle lijnen na lijn ``n`` wegcommentariëren zodat de ``n``de lijn de laatste expressie is binnen het `let` blok.
+"
+
+
+# ╔═╡ 97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
+#TODO
+
+# ╔═╡ 72d0417c-de29-4b2a-af89-c74016fbf6ad
+md"#### Handige matrix functies
+
+"
+
+# ╔═╡ b06f3f6c-d038-4fa2-b675-8ede7e6348b6
+
+
+# ╔═╡ 7b01db27-3dd4-42e6-b4aa-442d2266670e
+md"#### Kortere oneline functies met de ternary operator
+
+"
+
+# ╔═╡ a1587fd5-8f49-42d5-a1b8-51d62d56c892
+
+
+# ╔═╡ 5f37de56-bb6e-4811-9160-99f1b63e0875
+md"#### List comprehensions
+
+"
+
+# ╔═╡ 63bcdad7-c80d-4e41-91f1-44a7642de620
+
+
+# ╔═╡ f5c595b2-c48a-4373-960b-9aa25d70dc55
+md"#### De ingebouwde `sum` en `prod` functies
+
+"
+
+# ╔═╡ 0a9c54bb-682b-48b1-9b38-a95b63e523d1
+
+
+# ╔═╡ c83f7804-a5ea-4bcf-b2c8-4b0f6e4f35c5
+md"#### Strings
+
+"
+
+# ╔═╡ 76d22458-b22e-4af9-9edb-bf0f6b855e35
+
+
+# ╔═╡ bbe81be5-e34d-4696-9696-d738b2113f85
+md"#### Relationele en logische operatoren
+
+"
+
+# ╔═╡ dd70c88b-32b7-4ca9-8a9e-f9eea8489f92
+
+
+# ╔═╡ 8c6880e4-32ec-4a5e-a29c-20120fa31fe6
+md"#### For loops
+
+"
+
+# ╔═╡ b8b25044-e09c-4cec-a58e-92c2aadfca1d
+
+
+# ╔═╡ 4d101a73-6b77-4641-ba2d-645b66d3d713
+md"#### Functies
+
+"
+
+# ╔═╡ 0ab826eb-1117-4b88-84a3-98cf19c976d1
+
+
+# ╔═╡ a98cae60-8751-4c64-90f6-9583d240aa01
+md"#### Pipes
+
+"
+
+# ╔═╡ 16a75f24-6f32-4867-becf-bf99921928bd
+
+
+# ╔═╡ 4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
+md"#### Recursieve functies
+Fibonacci
+
+"
+
+# ╔═╡ 6194ef1d-65da-46f1-8bea-4c2db39a6c66
+
+
+# ╔═╡ 9e0a24ac-9cd5-48eb-bc31-9e73a81256cb
+
+
+# ╔═╡ 30fd63ec-0282-430b-9408-e3d77fb8aeed
+md"#### Timing en benchmarking
+
+"
+
+# ╔═╡ b289b895-f9c0-4942-b43e-536700dca28b
+
+
+# ╔═╡ 9c5b918f-0011-4703-b14d-af63269fbe14
 
 
 # ╔═╡ Cell order:
@@ -636,6 +760,34 @@ md"## Reeks 14
 # ╠═51645a3c-51b8-47a7-b2dc-2bcdd356ca37
 # ╟─9cd2914a-e540-4131-8606-3533aaa16887
 # ╠═72f7d7a6-55ce-4ba2-97d3-99bae26f54b1
-# ╠═7b766daf-f703-4dfd-a09c-c7439078574a
-# ╠═0269c3bc-0c2e-4095-ac9b-af62429f74ec
+# ╟─7b766daf-f703-4dfd-a09c-c7439078574a
+# ╟─0269c3bc-0c2e-4095-ac9b-af62429f74ec
+# ╠═95996e61-4511-4fa9-88c6-a08b895359fa
+# ╠═c6b4bdd7-8158-417c-92d6-5e1507228415
 # ╠═21a88921-8740-439e-8069-112d79014d2a
+# ╠═632d10c5-bd00-464d-bd56-8b899af525ef
+# ╠═97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
+# ╠═72d0417c-de29-4b2a-af89-c74016fbf6ad
+# ╠═b06f3f6c-d038-4fa2-b675-8ede7e6348b6
+# ╠═7b01db27-3dd4-42e6-b4aa-442d2266670e
+# ╠═a1587fd5-8f49-42d5-a1b8-51d62d56c892
+# ╠═5f37de56-bb6e-4811-9160-99f1b63e0875
+# ╠═63bcdad7-c80d-4e41-91f1-44a7642de620
+# ╠═f5c595b2-c48a-4373-960b-9aa25d70dc55
+# ╠═0a9c54bb-682b-48b1-9b38-a95b63e523d1
+# ╠═c83f7804-a5ea-4bcf-b2c8-4b0f6e4f35c5
+# ╠═76d22458-b22e-4af9-9edb-bf0f6b855e35
+# ╠═bbe81be5-e34d-4696-9696-d738b2113f85
+# ╠═dd70c88b-32b7-4ca9-8a9e-f9eea8489f92
+# ╠═8c6880e4-32ec-4a5e-a29c-20120fa31fe6
+# ╠═b8b25044-e09c-4cec-a58e-92c2aadfca1d
+# ╠═4d101a73-6b77-4641-ba2d-645b66d3d713
+# ╠═0ab826eb-1117-4b88-84a3-98cf19c976d1
+# ╠═a98cae60-8751-4c64-90f6-9583d240aa01
+# ╠═16a75f24-6f32-4867-becf-bf99921928bd
+# ╠═4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
+# ╠═6194ef1d-65da-46f1-8bea-4c2db39a6c66
+# ╠═9e0a24ac-9cd5-48eb-bc31-9e73a81256cb
+# ╠═30fd63ec-0282-430b-9408-e3d77fb8aeed
+# ╠═b289b895-f9c0-4942-b43e-536700dca28b
+# ╠═9c5b918f-0011-4703-b14d-af63269fbe14
