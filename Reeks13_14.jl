@@ -10,6 +10,15 @@ using Pkg #de Pkg package stelt ons in staat om binnen Julia packages te install
 # ╔═╡ 22410d92-2b7e-4a3f-8190-79b5562b4289
 using Plots #Julia heeft een aantal Plot packages, voorlopig lijkt "Plots" de interessantste, maar "Makie" is ook interessant. Plots is wel berucht om zijn trage opstarttijd.
 
+# ╔═╡ c6b4bdd7-8158-417c-92d6-5e1507228415
+using PlutoUI
+
+# ╔═╡ 789d0bc6-235d-433f-be4d-f9200fb94a71
+using LinearAlgebra
+
+# ╔═╡ dacbdbec-a43c-47bc-9f61-b2da6cecd3d6
+using BenchmarkTools #je weet intussen wel wat je moet doen als dit een error geeft
+
 # ╔═╡ 065f9b00-ce70-11eb-1ee1-5d39cf5e39fc
 md"# Oefeningen Julia I"
 
@@ -516,21 +525,18 @@ Het volgende programma demonstreert een aantal elementaire functies in Julia. Om
 # ╔═╡ 95996e61-4511-4fa9-88c6-a08b895359fa
 md"Als de volgende cel een error geeft, is dat omdat je `PlutoUI` nog niet hebt geïnstalleerd. `PlutoUI` is nodig om de terminal outputs weer te geven. Maak een nieuwe cel aan waarin je eerst `PlutoUI` installeert en vervolgens importeert."
 
-# ╔═╡ c6b4bdd7-8158-417c-92d6-5e1507228415
-
-
 # ╔═╡ 21a88921-8740-439e-8069-112d79014d2a
 with_terminal() do
 	println("sqrt(25) = ", sqrt(25))
 	println("cbrt(64) = ", cbrt(64))
 	println("exp(10) = ", exp(10))
 	println("log2(64) = ", log2(64))
-	println("log10(1000): ", log10(1000))
-	println("log(exp(4)): ", log(exp(4)))
-	println("conj(8 - 5im): ", conj(8 - 5im))
-	println("abs(3 + 4im): ", abs(3 + 4im))
-	println("angle(3 + 4im): ", angle(3 + 4im))
-	println("abs(3 + 4im) * exp(angle(3+4im)im): ", abs(3 + 4im) * exp(angle(3+4im)im))
+	println("log10(1000) = ", log10(1000))
+	println("log(exp(4)) = ", log(exp(4)))
+	println("conj(8 - 5im) = ", conj(8 - 5im))
+	println("abs(3 + 4im) = ", abs(3 + 4im))
+	println("angle(3 + 4im) = ", angle(3 + 4im))
+	println("abs(3 + 4im) * exp(angle(3+4im)im) = ", abs(3 + 4im) * exp(angle(3+4im)im))
 	println("24÷5 = ", 24÷5)
 	println("24/5 = ", 24/5)
 end
@@ -546,43 +552,216 @@ Het volgende programma definieert een matrix en manipuleert die vervolgens. Om a
 
 # ╔═╡ 72d0417c-de29-4b2a-af89-c74016fbf6ad
 md"#### Handige matrix functies
-
+We beginnen met een paar basisoperaties op matrices. Vergeet niet om zelf cellen bij te maken en te experimenteren!
 "
 
 # ╔═╡ b06f3f6c-d038-4fa2-b675-8ede7e6348b6
+zeros(4)
 
+# ╔═╡ 149eeb32-2e57-4ed6-9715-d0a4fe00cc22
+zeros(3, 5)
+
+# ╔═╡ a0d6706c-3e81-4454-872d-3d09f64bfcd6
+zeros(Int, 2, 3) #nulmatrix, met Int ipv Float
+
+# ╔═╡ db486089-cfba-4e85-927e-0428abb3a623
+ones(3,3)
+
+# ╔═╡ a790ef3a-f974-4080-897f-034823b594f1
+md"Het is vaak handig om willekeurige vectoren te genereren, dat kan met `rand` voor uniform verdeelde toevalswaarden, of `randn` voor normaal verdeelde toevalswaarden."
+
+# ╔═╡ 7c4cb8d8-d97c-473d-b2fc-3e583209ad03
+rand() # een willekeurig scalair van het type Float, tussen 0 en 1
+
+# ╔═╡ eb1bc9a8-aab7-48ea-92cb-6b68d1561d29
+rand(Int) #een willekeurige Integer tussen typemin(Int) en typemax(Int) 
+#!!Bereken die waarden zelf eens
+
+# ╔═╡ 75adcd97-cc6c-442d-9499-ff7a7b37405e
+rand(2, 10)
+
+# ╔═╡ a67f1409-2108-44c6-9703-19c3cc470e21
+rand(Int, 3, 5)
+
+# ╔═╡ 4beb86f4-9837-43c8-b7b8-996aa74f1479
+rand(1:8) #een willekeurig getal uit de lijst 1, 2, ..., 8
+
+# ╔═╡ 632099f4-f455-41ea-b122-45bc07cc656f
+rand(1:8, 4, 3)
+
+# ╔═╡ 4502bf24-721d-4288-b25c-30b40d7fbc08
+rand(LinRange(0, 1, 11), 3) #3 waarden uit de lijst [0, 0.1, 0.2, ..., 0.9, 1]
+
+# ╔═╡ d212b176-3c99-48c2-849a-a76be311b926
+rand(["Julia", "MATLAB", "Python"]) #kies een willekeurig element uit een lijst
+
+# ╔═╡ 60e43fcf-4b7f-4a2e-a00e-596e18f7c035
+randn(3) #normaalverdeeld
+
+# ╔═╡ 99b9b962-18bf-403e-8df0-f595d481aed6
+plot(histogram(randn(10_000)), histogram(rand(10_000))) 
+#plot 10 000 normaal verdeelde samples vs 10 000 uniform verdeelde samples
+
+# ╔═╡ 92f3665f-2ae9-41d6-81dd-5575f5e57acb
+md"De geavanceerdere matrix functionaliteit zit verzameld in de `LinearAlgebra` package."
+
+# ╔═╡ b0e3f7e3-c8a7-42c8-acd9-78bedc707a65
+zeros(3, 3) + I #I gedraagt zich als de eenheidsmatrix. Zijn afmetingen  en type worden aan de hand van de context bepaald.
+
+# ╔═╡ 40874524-624a-44ed-b343-9c3e0cfe5ce0
+zeros(Int, 2,2) + 3*I
+
+# ╔═╡ 7fc47001-03c6-41da-8f64-3a32fb59f24c
+md"Vervolgens berekenen we de eigenwaarde en vectoren van een matrix:"
+
+# ╔═╡ 4ecb91bb-ccba-4d19-932f-2f48e214e941
+H1 = [0 3 4; 
+	  1 3 2;
+	  2 2 2]
+
+# ╔═╡ ff84efe5-f520-4bac-bcac-4ed88f5e27b0
+eigvecs(H1)
+
+# ╔═╡ be2aa742-17af-4ab4-bffe-5d210fe6f125
+eigvals(H1)
+
+# ╔═╡ 52e296ef-138a-4be8-8317-47d790e57edd
+md"Natuurlijk kunnen we ook de determinant van een matrix bepalen:"
+
+# ╔═╡ 75ab63d4-553d-422e-9049-339b1d7f7610
+det(H1)
 
 # ╔═╡ 7b01db27-3dd4-42e6-b4aa-442d2266670e
 md"#### Kortere oneline functies met de ternary operator
+Beschouw de functie
 
+$$f(x) = \left\{\begin{array}{ll}
+x^3 - x^2 - x &\text{als } x ≤ 0\\
+\sin(x) &\text{als } x > 0
+\end{array}\right.$$
+
+We kunnen zo'n functie, zoals we in eerdere voorbeelden reeds zagen, als volgt implemnteren in Julia:
 "
 
-# ╔═╡ a1587fd5-8f49-42d5-a1b8-51d62d56c892
+# ╔═╡ af8ede65-5d83-4090-b800-b5c3982034db
+function f_versie1(x)
+	if x <= 0
+		return x^3 - x^2 - x
+	else
+		return sin(x)
+	end
+end
 
+# ╔═╡ 11eb6987-be85-4b48-8ad7-78d5df97c9d8
+md"Aangezien ``f`` een vrij eenvoudige functie is, zou het fijn zijn als we hem op een lijn zouden kunnen definiëren. Dat kan met behulp van de ternary operator:
+
+`<CONDITIE> ? <ALS CONDITIE TRUE> : <ALS CONDITIE FALSE>`
+
+Beschouw de volgende voorbeelden:"
+
+# ╔═╡ 4e105db0-0f54-4595-9c9d-12695d35769c
+2 + 2 == 5 ? "Winston" : "Julia"
+
+# ╔═╡ 869a2652-17bc-4c45-b47b-1bf0d5176a92
+0.2 < rand() < 0.5 ? "Winston" : "Julia"
+
+# ╔═╡ 96c73a3a-d4c2-464a-96ee-6c0fda12b5eb
+md"Maak nu gebruik van de ternary operator om `f_versie2` op 1 lijn te definiëren."
+
+# ╔═╡ 0df0ab28-b31b-4b38-b0df-0ff5fb1b7574
+f_versie2(x) = 0 #vervang door correcte uitdrukking
+
+# ╔═╡ 681d5693-614f-4ac1-a3b2-7328bcfe18e2
+md"Om visueel na te gaan dat de twee versies van de functie gelijk zijn, plotten we ze beiden op het interval ``[-1, 1]``."
+
+# ╔═╡ 4b3998d1-2d04-4bb1-8aa5-8a78e702a339
+let
+	t = LinRange(-1, 1, 100)
+	
+	plot(t, f_versie1.(t), color=:purple, xticks=-1:0.2:1)
+	plot!(t, f_versie2.(t), color=:orange, linestyle=:dot, linewidth=4, framestyle=:origin)
+end
 
 # ╔═╡ 5f37de56-bb6e-4811-9160-99f1b63e0875
 md"#### List comprehensions
-
+List comprehensions zijn een elegante, compacte en leesbare manier om Vectoren/Matrics/Arrays van een gewenste vorm te genereren.
 "
 
+# ╔═╡ 8897a771-2e72-4e9c-bddb-fccbdbfd79f0
+[2^n for n=0:4]
+
 # ╔═╡ 63bcdad7-c80d-4e41-91f1-44a7642de620
+[x + y - 1 for x=1:4, y=1:5]
+
+# ╔═╡ 4a34938b-8e6e-4da4-a2f9-e357ca331b19
+md"List comprehensions kunnen natuurlijk ook in combinatie met de ternary operator gebruikt worden:"
+
+# ╔═╡ 9612e89f-e061-46f3-b0b9-ee199da16c08
+[iseven(x + y) ? 0 : 1 for x=0:3, y=99:102] 
+
+# ╔═╡ 465e3893-ede1-4e79-a719-3b576e736698
+md"Probeer een ``6\times 6`` diagonaalmatrix te genereren met een list comprehension in combinatie met een ternary operator."
+
+# ╔═╡ 88c17f24-4fb3-4e48-9a35-21f2650d31a3
 
 
 # ╔═╡ f5c595b2-c48a-4373-960b-9aa25d70dc55
 md"#### De ingebouwde `sum` en `prod` functies
-
+De ingebouwde functie `sum` neemt als input een Vector/Matrix/Array of comprehension en berekent de som:
 "
 
-# ╔═╡ 0a9c54bb-682b-48b1-9b38-a95b63e523d1
+# ╔═╡ 81467415-4954-4fdc-b77a-8416d5c65c00
+sum([1 2 3 4 5])
 
+# ╔═╡ f1df2d03-26c8-4a9a-9fd5-4c861995cd33
+sum([1 2 3; 4 5 6])
+
+# ╔═╡ 0a9c54bb-682b-48b1-9b38-a95b63e523d1
+sum([x^2 for x=3:8])
+
+# ╔═╡ 2a0f9be5-ad48-4d79-95eb-cdb8603cf586
+md"Dat laatste voorbeeld is niet erg efficiënt. We maken namelijk eerst een lijst aan (neemt geheugen in beslag) en berekenen vervolgens de som van die lijst. Dat kan beter:"
+
+# ╔═╡ 7a2ea1cc-139c-4cd7-b928-245350139d63
+sum(x^2 for x=3:8)
+
+# ╔═╡ b557c766-dcb2-4a14-b31e-cd29a9c5ad84
+md"De `prod` functie werkt natuurlijk volledig analoog."
 
 # ╔═╡ c83f7804-a5ea-4bcf-b2c8-4b0f6e4f35c5
 md"#### Strings
-
+Bijzonder in Julia is dat twee Strings aan elkaar worden geplakt met de `*` operator in plaats van de `+` operator die in de meeste andere talen wordt gebruikt. Dat is eigenlijk een veel logischere keuze aangezien we ``a\times b`` vaak schrijven als ``ab`` terwijl we voor ``a + b`` geen andere notatie hebben.
 "
 
-# ╔═╡ 76d22458-b22e-4af9-9edb-bf0f6b855e35
+# ╔═╡ 3a99038b-f999-4cd6-abb1-8a03b1449521
+"Ik eet " * "fruit" * " en groenten."
 
+# ╔═╡ 76d22458-b22e-4af9-9edb-bf0f6b855e35
+md"Verder kan er in Julia Strings gebruik worden gemaakt van *interpolatie*. We illustreren dit met een voorbeeld."
+
+# ╔═╡ e87f73a3-b031-495b-8e87-97cbd2812b24
+assistent = "NAAM_ASSISTENT"
+
+# ╔═╡ 67a7ab60-108b-4dc7-8d08-853f81905de9
+naam = "JOUW_NAAM"
+
+# ╔═╡ 9fed9a56-ac7f-4e95-aea9-b6565d93fc7c
+"De favoriete leerling van $assistent is $naam."
+
+# ╔═╡ 96a2714f-1550-4d60-a7ac-d616e3f1a83c
+md"Maar ook ingewikkeldere constructies zijn mogelijk:"
+
+# ╔═╡ 9a38cc68-9c09-4769-929f-4410e6026252
+professor = "NAAM_PROF"
+
+# ╔═╡ 5e08546c-6ea8-46cf-a69f-c14a58820bff
+score = 14
+
+# ╔═╡ b4e8a22f-ad01-402f-8821-8a8ba84b1217
+"Prof. $professor gaf met een $score, maar ik verdiende een $(round(Int, exp(score) + score^2))"
+
+# ╔═╡ 0206b776-00af-42f8-9e84-1f57c5d9dcb2
+"Als je mijn naam $naam omdraait, dan krijg je $(reverse(naam))"
 
 # ╔═╡ bbe81be5-e34d-4696-9696-d738b2113f85
 md"#### Relationele en logische operatoren
@@ -593,28 +772,175 @@ md"#### Relationele en logische operatoren
 
 
 # ╔═╡ 8c6880e4-32ec-4a5e-a29c-20120fa31fe6
-md"#### For loops
+md"""#### For loops
+Gegeven een Array `K` (in dit voorbeeld een `Matrix`), kunnen we op verschillende manieren over de elementen van `M` itereren. In het eerste voorbeeld gebruiken we de "klassieke" manier om over de elementen van een matrix te itereren: via 2 geneste `for` loops:
+"""
 
-"
+# ╔═╡ fdf2a890-c75d-4255-85c7-bd3cc3e595c0
+K = rand(2, 5)
+
+# ╔═╡ 7471e01d-7b99-4000-9e53-a6e0ac83644a
+let
+	newK = zeros(size(K)) #nulmatrix even groot als K
+	
+	for j=1:size(K,2)
+		for i=1:size(K,1) 
+			newK[i, j] = K[i, j]^2
+		end
+	end
+	#performance tip: altijd kolommen in binnenste lus wegens samenhang in computergeheugen
+	newK
+end
+
+# ╔═╡ 835d59cf-73ea-4d85-a4cf-27f4b04f77e3
+md"In de volgende voorbeelden zoeken we steeds naar het grootste element in `K`:"
+
+# ╔═╡ 71b7de70-4136-48d5-9399-f07e34409dbe
+let
+	#we stellen de beginwaarde van M gelijk aan de minimale waarde die een element van K kan hebben. Voer dit commando eens uit in een aparte cel om het beter te begrijpen.
+	M = typemin(eltype(K)) 
+	
+	for i=1:length(K)
+		if K[i] > M
+			M = K[i]
+		end
+	end
+	
+	M
+end
+
+# ╔═╡ 8b0b7513-1271-4519-b525-202a1f46360d
+let
+	M = typemin(eltype(K)) 
+	
+	for k in K
+		if k > M
+			M = k
+		end
+	end
+	
+	M
+end
 
 # ╔═╡ b8b25044-e09c-4cec-a58e-92c2aadfca1d
+let
+	M = typemin(eltype(K)) 
+	idx_M = 0
+	
+	for idx in eachindex(K)
+		if K[idx] > M
+			M = K[idx]
+			idx_M = idx
+		end
+	end
+	
+	M, idx_M
+end
 
+# ╔═╡ 55640801-146a-45a6-8d74-e0ea36aac298
+let
+	M = typemin(eltype(K)) 
+	idx_M = 0
+	
+	for (idx, value) in enumerate(K)
+		if value > M
+			M = value
+			idx_M = idx
+		end
+	end
+	
+	M, idx_M
+end
+
+# ╔═╡ aee01040-4a40-443c-be11-e42cba1ac525
+md"Ten slotte biedt Julia nog een oplossing voor de slordigheid die geneste `for` loops teweeg kunnen brengen:"
+
+# ╔═╡ 592ae9d2-5245-478f-b7e9-fbb8593ae3e7
+let
+	U = zeros(4, 4)
+	for i=1:4
+		for j=1:4
+			for k=1:8
+				U[i, j] += k^2
+			end
+		end
+	end
+	U
+end
+
+# ╔═╡ 772b145d-e949-475a-8dce-0d9db809aa71
+md"De bovenstaande code kan vereenvoudigd worden naar:"
+
+# ╔═╡ 42b1fafd-898d-48a4-bd9c-9e301b5af57e
+let
+	U = zeros(4, 4)
+	for i=1:4, j=1:4, k=1:8
+		U[i,j] += k^2
+	end
+	U
+end
 
 # ╔═╡ 4d101a73-6b77-4641-ba2d-645b66d3d713
 md"#### Functies
-
+#type annotatie uitleggen
 "
 
 # ╔═╡ 0ab826eb-1117-4b88-84a3-98cf19c976d1
 
 
 # ╔═╡ a98cae60-8751-4c64-90f6-9583d240aa01
-md"#### Pipes
+md"""#### Pipes
+In datascience moeten we vaak een groot aantal transformaties uitvoeren op onze data. De data moet als het ware door een hele "pijplijn" van functies stromen:
+"""
 
-"
+# ╔═╡ 5c3e8f2c-82b6-4bbd-9b10-95ba22030059
+data = randn(10)
 
 # ╔═╡ 16a75f24-6f32-4867-becf-bf99921928bd
+let
+	data2 = reverse(data) #draai de data om
+	data3 = abs.(data2) #absolute waarde berekenen
+	data4 = sqrt.(data3) #kwadrateer de data
+	data5 = sum(data4) #bepaal de som
+end
 
+# ╔═╡ a62695a3-0cb5-45cf-9068-a9124a9e40cf
+md"We kunnen dit ook op een lijn schrijven, door het onmiddellijk achter elkaar uitvoeren van de functies:"
+
+# ╔═╡ d00142d9-76bd-4d08-8a28-c8f8c52a30ee
+data5 = sum(sqrt.(abs.(reverse(data))))
+
+# ╔═╡ 5d79a823-d7bb-42f4-983f-dca60a3999ba
+md"Dit niet zo leesbaar meer voor onze Westerse ogen, aangezien we de functies van rechts naar links moeten uitvoeren. Julia heeft hier natuurlijk een elegante oplossing voor: de pipe operator `|>` en zijn elementsgewijze variant `.|>`:"
+
+# ╔═╡ 4bd3d80c-932f-46a2-870f-99fc00f26ae7
+data |> reverse .|> abs .|> sqrt |> sum
+
+# ╔═╡ 353eb275-3c22-492a-850a-11012004422e
+md"Als we tussen de vierkantswortel en de som de data nog eens elementsgewijs zouden willen verheffen tot, bijvoorbeeld, de derde macht, dan zouden we een functie `derdemacht(x) = x^3` kunnen definiëren en die daar dan tussen plakken, of we zouden gebruik kunnen maken van een *annonieme functie*:"
+
+# ╔═╡ c462b1fa-bc51-4b35-aec1-804d658de957
+data |> reverse .|> abs .|> sqrt .|> (x -> x^3) |> sum
+
+# ╔═╡ 6c07ec9e-5fcf-495a-8759-bf743f93daa9
+md"Dankzij annonieme functies, kunnen we nu ook functies die meer dan een argument vereisen toevoegen aan onze pijplijn! De functie `round(x, digits=n)` rondt `x` af tot `n` cijfers na de komma. Laten we het resultaat afronden tot 3 cijfers na de komma:"
+
+# ╔═╡ ff00eba0-dd64-4f51-9746-7f848164edc3
+data |> reverse .|> abs .|> sqrt .|> (x -> x^3) |> sum |> (x -> round(x, digits=3))
+
+# ╔═╡ aa001081-ee2c-4d48-84dd-c78229f8e71c
+md"Natuurlijk gebruik je liefst zo veel mogelijk niet-annonieme functies om je programma leesbaar te houden!"
+
+# ╔═╡ ab7e655d-114f-4c42-a295-b4c31119863c
+md"""Opmerking: de Julia community voert momenteel een debat om de vaak gebruikte notatie
+
+`... |> (x -> f(x, arg1, arg2, ...)) |> ...`
+
+te vereenvoudigen naar
+
+`... |> f(_, arg1, arg2, ...) |> ...`
+
+waarbij `_` dan "ingevuld" wordt."""
 
 # ╔═╡ 4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
 md"#### Recursieve functies
@@ -630,14 +956,44 @@ Fibonacci
 
 # ╔═╡ 30fd63ec-0282-430b-9408-e3d77fb8aeed
 md"#### Timing en benchmarking
-
+Om het tijd- en geheugengebruik van je functies te meten, kun je gebruik maken van de package `BenchmarkTools`:
 "
 
-# ╔═╡ b289b895-f9c0-4942-b43e-536700dca28b
+# ╔═╡ 173d8e66-79d9-4871-bbf5-7edd7138722e
+function slowsum(n)
+	return sum([k^2 - k for k=1:n])
+end
 
+# ╔═╡ 1c3bd18e-384b-4595-aefd-0bc60ebf1a8a
+function fastersum(n)
+	return sum(k^2 - k for k=1:n)
+end
+
+# ╔═╡ 68eea311-7d94-4fcb-a450-a9fde2651f5b
+function ik_ken_gewoon_de_formule(n)
+	return n*(n+1)/2
+end
+
+# ╔═╡ 0a9ed3d9-0366-4038-84d9-5f87e774faac
+md"We gebruiken het macro `@btime` om de daaropvolgende expressie een aantal keer uit te voeren en de gemiddelde uitvoeringstijd te meten alsook het geheugengebruik."
+
+# ╔═╡ b289b895-f9c0-4942-b43e-536700dca28b
+with_terminal() do #hebben we nodig om de output te zien
+	@btime slowsum(1_000_000)
+end
 
 # ╔═╡ 9c5b918f-0011-4703-b14d-af63269fbe14
+with_terminal() do #hebben we nodig om de output te zien
+	@btime fastersum(1_000_000)
+end
 
+# ╔═╡ be1102d0-3a00-4a21-8731-f277fe408b01
+with_terminal() do #hebben we nodig om de output te zien
+	@btime ik_ken_gewoon_de_formule(1_000_000)
+end
+
+# ╔═╡ e9317e3d-e0f7-4a21-b74a-bfad3a64c14a
+md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het leren beheersen van de taal Julia is een lang proces, maar wel enorm bevredigend."
 
 # ╔═╡ Cell order:
 # ╟─065f9b00-ce70-11eb-1ee1-5d39cf5e39fc
@@ -769,25 +1125,103 @@ md"#### Timing en benchmarking
 # ╠═97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
 # ╠═72d0417c-de29-4b2a-af89-c74016fbf6ad
 # ╠═b06f3f6c-d038-4fa2-b675-8ede7e6348b6
+# ╠═149eeb32-2e57-4ed6-9715-d0a4fe00cc22
+# ╠═a0d6706c-3e81-4454-872d-3d09f64bfcd6
+# ╠═db486089-cfba-4e85-927e-0428abb3a623
+# ╠═a790ef3a-f974-4080-897f-034823b594f1
+# ╠═7c4cb8d8-d97c-473d-b2fc-3e583209ad03
+# ╠═eb1bc9a8-aab7-48ea-92cb-6b68d1561d29
+# ╠═75adcd97-cc6c-442d-9499-ff7a7b37405e
+# ╠═a67f1409-2108-44c6-9703-19c3cc470e21
+# ╠═4beb86f4-9837-43c8-b7b8-996aa74f1479
+# ╠═632099f4-f455-41ea-b122-45bc07cc656f
+# ╠═4502bf24-721d-4288-b25c-30b40d7fbc08
+# ╠═d212b176-3c99-48c2-849a-a76be311b926
+# ╠═60e43fcf-4b7f-4a2e-a00e-596e18f7c035
+# ╠═99b9b962-18bf-403e-8df0-f595d481aed6
+# ╠═92f3665f-2ae9-41d6-81dd-5575f5e57acb
+# ╠═789d0bc6-235d-433f-be4d-f9200fb94a71
+# ╠═b0e3f7e3-c8a7-42c8-acd9-78bedc707a65
+# ╠═40874524-624a-44ed-b343-9c3e0cfe5ce0
+# ╠═7fc47001-03c6-41da-8f64-3a32fb59f24c
+# ╠═4ecb91bb-ccba-4d19-932f-2f48e214e941
+# ╠═ff84efe5-f520-4bac-bcac-4ed88f5e27b0
+# ╠═be2aa742-17af-4ab4-bffe-5d210fe6f125
+# ╠═52e296ef-138a-4be8-8317-47d790e57edd
+# ╠═75ab63d4-553d-422e-9049-339b1d7f7610
 # ╠═7b01db27-3dd4-42e6-b4aa-442d2266670e
-# ╠═a1587fd5-8f49-42d5-a1b8-51d62d56c892
+# ╠═af8ede65-5d83-4090-b800-b5c3982034db
+# ╠═11eb6987-be85-4b48-8ad7-78d5df97c9d8
+# ╠═4e105db0-0f54-4595-9c9d-12695d35769c
+# ╠═869a2652-17bc-4c45-b47b-1bf0d5176a92
+# ╠═96c73a3a-d4c2-464a-96ee-6c0fda12b5eb
+# ╠═0df0ab28-b31b-4b38-b0df-0ff5fb1b7574
+# ╠═681d5693-614f-4ac1-a3b2-7328bcfe18e2
+# ╠═4b3998d1-2d04-4bb1-8aa5-8a78e702a339
 # ╠═5f37de56-bb6e-4811-9160-99f1b63e0875
+# ╠═8897a771-2e72-4e9c-bddb-fccbdbfd79f0
 # ╠═63bcdad7-c80d-4e41-91f1-44a7642de620
+# ╠═4a34938b-8e6e-4da4-a2f9-e357ca331b19
+# ╠═9612e89f-e061-46f3-b0b9-ee199da16c08
+# ╠═465e3893-ede1-4e79-a719-3b576e736698
+# ╠═88c17f24-4fb3-4e48-9a35-21f2650d31a3
 # ╠═f5c595b2-c48a-4373-960b-9aa25d70dc55
+# ╠═81467415-4954-4fdc-b77a-8416d5c65c00
+# ╠═f1df2d03-26c8-4a9a-9fd5-4c861995cd33
 # ╠═0a9c54bb-682b-48b1-9b38-a95b63e523d1
+# ╠═2a0f9be5-ad48-4d79-95eb-cdb8603cf586
+# ╠═7a2ea1cc-139c-4cd7-b928-245350139d63
+# ╠═b557c766-dcb2-4a14-b31e-cd29a9c5ad84
 # ╠═c83f7804-a5ea-4bcf-b2c8-4b0f6e4f35c5
+# ╠═3a99038b-f999-4cd6-abb1-8a03b1449521
 # ╠═76d22458-b22e-4af9-9edb-bf0f6b855e35
+# ╠═e87f73a3-b031-495b-8e87-97cbd2812b24
+# ╠═67a7ab60-108b-4dc7-8d08-853f81905de9
+# ╠═9fed9a56-ac7f-4e95-aea9-b6565d93fc7c
+# ╠═96a2714f-1550-4d60-a7ac-d616e3f1a83c
+# ╠═9a38cc68-9c09-4769-929f-4410e6026252
+# ╠═5e08546c-6ea8-46cf-a69f-c14a58820bff
+# ╠═b4e8a22f-ad01-402f-8821-8a8ba84b1217
+# ╠═0206b776-00af-42f8-9e84-1f57c5d9dcb2
 # ╠═bbe81be5-e34d-4696-9696-d738b2113f85
 # ╠═dd70c88b-32b7-4ca9-8a9e-f9eea8489f92
 # ╠═8c6880e4-32ec-4a5e-a29c-20120fa31fe6
+# ╠═fdf2a890-c75d-4255-85c7-bd3cc3e595c0
+# ╠═7471e01d-7b99-4000-9e53-a6e0ac83644a
+# ╠═835d59cf-73ea-4d85-a4cf-27f4b04f77e3
+# ╠═71b7de70-4136-48d5-9399-f07e34409dbe
+# ╠═8b0b7513-1271-4519-b525-202a1f46360d
 # ╠═b8b25044-e09c-4cec-a58e-92c2aadfca1d
+# ╠═55640801-146a-45a6-8d74-e0ea36aac298
+# ╠═aee01040-4a40-443c-be11-e42cba1ac525
+# ╠═592ae9d2-5245-478f-b7e9-fbb8593ae3e7
+# ╠═772b145d-e949-475a-8dce-0d9db809aa71
+# ╠═42b1fafd-898d-48a4-bd9c-9e301b5af57e
 # ╠═4d101a73-6b77-4641-ba2d-645b66d3d713
 # ╠═0ab826eb-1117-4b88-84a3-98cf19c976d1
 # ╠═a98cae60-8751-4c64-90f6-9583d240aa01
+# ╠═5c3e8f2c-82b6-4bbd-9b10-95ba22030059
 # ╠═16a75f24-6f32-4867-becf-bf99921928bd
+# ╠═a62695a3-0cb5-45cf-9068-a9124a9e40cf
+# ╠═d00142d9-76bd-4d08-8a28-c8f8c52a30ee
+# ╠═5d79a823-d7bb-42f4-983f-dca60a3999ba
+# ╠═4bd3d80c-932f-46a2-870f-99fc00f26ae7
+# ╠═353eb275-3c22-492a-850a-11012004422e
+# ╠═c462b1fa-bc51-4b35-aec1-804d658de957
+# ╠═6c07ec9e-5fcf-495a-8759-bf743f93daa9
+# ╠═ff00eba0-dd64-4f51-9746-7f848164edc3
+# ╠═aa001081-ee2c-4d48-84dd-c78229f8e71c
+# ╠═ab7e655d-114f-4c42-a295-b4c31119863c
 # ╠═4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
 # ╠═6194ef1d-65da-46f1-8bea-4c2db39a6c66
 # ╠═9e0a24ac-9cd5-48eb-bc31-9e73a81256cb
 # ╠═30fd63ec-0282-430b-9408-e3d77fb8aeed
+# ╠═dacbdbec-a43c-47bc-9f61-b2da6cecd3d6
+# ╠═173d8e66-79d9-4871-bbf5-7edd7138722e
+# ╠═1c3bd18e-384b-4595-aefd-0bc60ebf1a8a
+# ╠═68eea311-7d94-4fcb-a450-a9fde2651f5b
+# ╠═0a9ed3d9-0366-4038-84d9-5f87e774faac
 # ╠═b289b895-f9c0-4942-b43e-536700dca28b
 # ╠═9c5b918f-0011-4703-b14d-af63269fbe14
+# ╠═be1102d0-3a00-4a21-8731-f277fe408b01
+# ╠═e9317e3d-e0f7-4a21-b74a-bfad3a64c14a
