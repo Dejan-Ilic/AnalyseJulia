@@ -515,11 +515,12 @@ end
 
 # ╔═╡ 7b766daf-f703-4dfd-a09c-c7439078574a
 md"## Reeks 14
-In deze reeks bekijken we een aantal voorbeeldprogramma's in Julia.
+In deze reeks bekijken we een aantal voorbeelden van veelvoorkomende taken in Julia. We bekijken ook de syntax van Julia in meer detail.
 "
 
 # ╔═╡ 0269c3bc-0c2e-4095-ac9b-af62429f74ec
-md"#### Elementaire functies en terminal output
+md"### Basisfunctionaliteit
+#### Elementaire functies en terminal output
 Het volgende programma demonstreert een aantal elementaire functies in Julia. Om de output van alle operaties te tonen, maken we gebruik van een `with_terminal() do ... end` blok, waarbinnen we de `println` functie gebruiken om resultaten weer te geven. In toekomstige versies van Pluto zal het weergeven van outputs met het `@info` macro gebeuren."
 
 # ╔═╡ 95996e61-4511-4fa9-88c6-a08b895359fa
@@ -703,7 +704,7 @@ md"List comprehensions kunnen natuurlijk ook in combinatie met de ternary operat
 md"Probeer een ``6\times 6`` diagonaalmatrix te genereren met een list comprehension in combinatie met een ternary operator."
 
 # ╔═╡ 88c17f24-4fb3-4e48-9a35-21f2650d31a3
-
+#code hier
 
 # ╔═╡ f5c595b2-c48a-4373-960b-9aa25d70dc55
 md"#### De ingebouwde `sum` en `prod` functies
@@ -734,7 +735,7 @@ Bijzonder in Julia is dat twee Strings aan elkaar worden geplakt met de `*` oper
 "
 
 # ╔═╡ 3a99038b-f999-4cd6-abb1-8a03b1449521
-"Ik eet " * "fruit" * " en groenten."
+"ProFeSSor: " * "1 Frak" * " en 2 Schoenen."
 
 # ╔═╡ 76d22458-b22e-4af9-9edb-bf0f6b855e35
 md"Verder kan er in Julia Strings gebruik worden gemaakt van *interpolatie*. We illustreren dit met een voorbeeld."
@@ -765,11 +766,62 @@ score = 14
 
 # ╔═╡ bbe81be5-e34d-4696-9696-d738b2113f85
 md"#### Relationele en logische operatoren
-
+Eerst definiëren we een aantal matrices.
 "
 
 # ╔═╡ dd70c88b-32b7-4ca9-8a9e-f9eea8489f92
+A = rand(3, 2)
 
+# ╔═╡ 565684f6-3af4-43e5-928f-69b0c49d127f
+B = rand(3, 2)
+
+# ╔═╡ eedbef48-8576-4760-a3d8-62d541844a37
+C = copy(A)
+
+# ╔═╡ e4da6ac3-eaee-488d-9d3c-3ccd4a757ee0
+D = A
+
+# ╔═╡ 1aee8401-46fd-4bbe-a6f3-9ce954f6d2f6
+md"Vervolgens testen we de gelijkheidsoperatoren `==` en `===` (hun tegenhangers zijn `!=` en `!==`)."
+
+# ╔═╡ 8d754a53-ec27-4afe-bd62-8e9de763ece4
+A == B #false, ze zijn verschillend
+
+# ╔═╡ 6616b702-1bf4-4df5-bb74-773d168125c2
+A == C #ja C is een kopie van A
+
+# ╔═╡ 9bb4c8ee-75f8-4ce3-8b67-200f48a55ed5
+A === C #false, A en C zijn wel gelijk maar leven niet in hetzelfde stuk geheugen
+
+# ╔═╡ a3eb3595-514e-482c-a95d-067eaa751ce4
+A === D #true, A en D verwijzen naar hetzelfde object
+
+# ╔═╡ f0a1c792-bd41-41d2-a8b8-7a3ef70e0a7b
+md"Verder hebben we ook nog `<` en `<=` (equivalent aan `≤`, wat je invoert door `\leq<TAB>` te typen)."
+
+# ╔═╡ 6272e43d-978b-41ef-942d-367d68456602
+3 < 4
+
+# ╔═╡ b58d5afe-8748-4d38-afbb-06de4045e698
+5 ≤ 4
+
+# ╔═╡ 4f6a1d1d-0d15-41c1-a8f9-c20e67106d92
+md"Natuurlijk werken deze operator ook puntsgewijs."
+
+# ╔═╡ b38e5061-b771-4ead-a5f7-550b16210d68
+A .< B
+
+# ╔═╡ d13b243c-38a9-4ca7-a3e1-e458cc6be40e
+md"Ten slotte hebben we ook nog `!` (not), `&&` (and) en `||` (or):"
+
+# ╔═╡ 8150e5d2-7ab1-41a1-9ca9-80a9dc254c17
+!true
+
+# ╔═╡ 9dd0b6e1-bcff-4b6d-835e-73907716cb1e
+false && true
+
+# ╔═╡ af38befb-1ae1-49e9-8dfb-575b21e8ef64
+true || false
 
 # ╔═╡ 8c6880e4-32ec-4a5e-a29c-20120fa31fe6
 md"""#### For loops
@@ -880,17 +932,106 @@ let
 	U
 end
 
-# ╔═╡ 4d101a73-6b77-4641-ba2d-645b66d3d713
-md"#### Functies
-#type annotatie uitleggen
+# ╔═╡ 4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
+md"#### Recursieve functies
+Het volgende voorbeeld definieert twee functies die het `n`de getal uit de rij van Fibonacci berekenen.
 "
 
-# ╔═╡ 0ab826eb-1117-4b88-84a3-98cf19c976d1
+# ╔═╡ b87d6a15-89e2-4f1e-9e7e-aaa541bedd7e
 
+
+# ╔═╡ 4d101a73-6b77-4641-ba2d-645b66d3d713
+md"### Gevorderde functionaliteit
+#### Type-annotation in functies
+In Julia hoef je bijna nooit over de types van je variabelen na te denken. Julia is slim genoeg om dat voor jou te doen. 
+
+Je hebt echter wel de mogelijkheid. Beschouw de volgende functie `zoek_in_lijst(lijst, element)` die `true` teruggeeft als het `element` voorkomt in `lijst`:
+"
+
+# ╔═╡ eb4a1cea-aae1-4800-8f73-36f10af5b543
+function zoek_in_lijst_v1(lijst, element)
+	for xi in lijst
+		if xi == element
+			return true
+		end
+	end
+	return false
+end
+
+# ╔═╡ f48d6ddb-f81a-4ee6-8eac-8bab62769070
+md"Het probleem met deze definitie is dat we om het even welke argumenten kunnen meegeven:"
+
+# ╔═╡ c0fad7ba-fd55-4b5d-bc30-87c00488ed99
+zoek_in_lijst_v1([1 2 3 4], 8) #zinnig
+
+# ╔═╡ c763e519-ade6-4272-a913-d0a11cb90fa5
+zoek_in_lijst_v1(false, 3) #onzin!
+
+# ╔═╡ e1c243f3-2b05-482d-8745-f3184e006b99
+md"Als we echter aan de gebruiker willen duidelijk maken dat `lijst` alleen van het type `Array` mag zijn, en dat de functie een waarde van het type `Bool` teruggeeft, dan kunnen we gebruik maken van type-annotatie:"
+
+# ╔═╡ 9a605a62-5a9b-46ba-916b-07ff6672287b
+function zoek_in_lijst_v2(lijst::Array, element)::Bool
+	for xi in lijst
+		if xi == element
+			return true
+		end
+	end
+	return false
+end
+
+# ╔═╡ 0ab826eb-1117-4b88-84a3-98cf19c976d1
+zoek_in_lijst_v2([3 4 5 9], 99)
+
+# ╔═╡ 98228370-6b93-47e4-8129-caa2dbe2f485
+zoek_in_lijst_v2(3, 99) #onzin
+
+# ╔═╡ 24995364-439e-4481-b120-e8627b58ffcc
+md"**Opmerking:** onze definitie van `zoek_in_lijst_v2` is iets te strikt. We kunnen `zoek_in_lijst_v2`  niet meer gebruiken om te bepalen of bijvoorbeeld `0.3` voorkomt in `LinRange(0, 1, 11)`. Dat komt omdat `LinRange(0, 1, 11)` geen `Array` is."
+
+# ╔═╡ ac1d692e-6967-429c-b562-c2be6d4b8a63
+zoek_in_lijst_v2(LinRange(0, 1, 11), 0.3)
+
+# ╔═╡ 28d67a4b-abe8-46df-b6bb-2487dbf3e33e
+md"`LinRange`, en andere types die zich gedragen als een `Array` maar er geen zijn, zijn in Julia geïmplementeerd als een *subtype* van `AbstractArray`. Dat leidt ons naar de finale versie van onze functie:"
+
+# ╔═╡ 3bcfd003-5c6f-4cd8-b9f1-60769cbc3d63
+function zoek_in_lijst_v3(lijst::AbstractArray, element)::Bool
+	for xi in lijst
+		if xi == element
+			return true
+		end
+	end
+	return false
+end
+
+# ╔═╡ fad1b1f0-2052-43fb-9e77-f5bfb413f3e9
+zoek_in_lijst_v3(LinRange(0, 1, 11), 0.3)
+
+# ╔═╡ 24198787-92e1-47d1-af6e-1a1403f458d8
+md"En gelukkig nog steeds:"
+
+# ╔═╡ 851ed215-a8b4-41e7-9e73-36f6acf59a50
+zoek_in_lijst_v3(3, 99) #onzin
+
+# ╔═╡ f3076f20-e98a-483f-a06e-9cb3ff5ccfdb
+md"**Opmerking:** in Julia kun je ook je eigen types definiëren. Raadpleeg voor meer informatie de officiële Julia documentatie."
+
+# ╔═╡ 4785c17f-d1f7-4c57-a765-66df97781833
+md"**Opmerking:** in Julia kun je ook schrijven:"
+
+# ╔═╡ 12201881-dd56-4316-bb0b-458cdeb758bb
+3 in [1 2 5 9 1 3]
+
+# ╔═╡ 14c4cdde-e483-4ebd-a561-457e713934b7
+33 in [1 2 5 9 1 3]
+
+# ╔═╡ d8001506-4983-4738-826a-89e160f796ab
+3 ∈ [1 2 5 9 1 3]
 
 # ╔═╡ a98cae60-8751-4c64-90f6-9583d240aa01
 md"""#### Pipes
-In datascience moeten we vaak een groot aantal transformaties uitvoeren op onze data. De data moet als het ware door een hele "pijplijn" van functies stromen:
+In datascience moeten we vaak een groot aantal transformaties uitvoeren op onze data. De data moet als het ware door een hele "pijplijn" van functies stromen. Het volgende voorbeeld illustreert dit:
 """
 
 # ╔═╡ 5c3e8f2c-82b6-4bbd-9b10-95ba22030059
@@ -932,7 +1073,7 @@ data |> reverse .|> abs .|> sqrt .|> (x -> x^3) |> sum |> (x -> round(x, digits=
 md"Natuurlijk gebruik je liefst zo veel mogelijk niet-annonieme functies om je programma leesbaar te houden!"
 
 # ╔═╡ ab7e655d-114f-4c42-a295-b4c31119863c
-md"""Opmerking: de Julia community voert momenteel een debat om de vaak gebruikte notatie
+md"""**Opmerking:** de Julia community voert momenteel een debat om de vaak gebruikte notatie
 
 `... |> (x -> f(x, arg1, arg2, ...)) |> ...`
 
@@ -940,19 +1081,9 @@ te vereenvoudigen naar
 
 `... |> f(_, arg1, arg2, ...) |> ...`
 
-waarbij `_` dan "ingevuld" wordt."""
+waarbij `_` dan "ingevuld" wordt. Dat zou betekenen dat we de vorige pijplijn kunnen vereenvoudigen naar
 
-# ╔═╡ 4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
-md"#### Recursieve functies
-Fibonacci
-
-"
-
-# ╔═╡ 6194ef1d-65da-46f1-8bea-4c2db39a6c66
-
-
-# ╔═╡ 9e0a24ac-9cd5-48eb-bc31-9e73a81256cb
-
+`data |> reverse .|> abs .|> sqrt .|> (x -> x^3) |> sum |> round(_, digits=3)`"""
 
 # ╔═╡ 30fd63ec-0282-430b-9408-e3d77fb8aeed
 md"#### Timing en benchmarking
@@ -1116,8 +1247,8 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═51645a3c-51b8-47a7-b2dc-2bcdd356ca37
 # ╟─9cd2914a-e540-4131-8606-3533aaa16887
 # ╠═72f7d7a6-55ce-4ba2-97d3-99bae26f54b1
-# ╟─7b766daf-f703-4dfd-a09c-c7439078574a
-# ╟─0269c3bc-0c2e-4095-ac9b-af62429f74ec
+# ╠═7b766daf-f703-4dfd-a09c-c7439078574a
+# ╠═0269c3bc-0c2e-4095-ac9b-af62429f74ec
 # ╠═95996e61-4511-4fa9-88c6-a08b895359fa
 # ╠═c6b4bdd7-8158-417c-92d6-5e1507228415
 # ╠═21a88921-8740-439e-8069-112d79014d2a
@@ -1185,6 +1316,23 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═0206b776-00af-42f8-9e84-1f57c5d9dcb2
 # ╠═bbe81be5-e34d-4696-9696-d738b2113f85
 # ╠═dd70c88b-32b7-4ca9-8a9e-f9eea8489f92
+# ╠═565684f6-3af4-43e5-928f-69b0c49d127f
+# ╠═eedbef48-8576-4760-a3d8-62d541844a37
+# ╠═e4da6ac3-eaee-488d-9d3c-3ccd4a757ee0
+# ╟─1aee8401-46fd-4bbe-a6f3-9ce954f6d2f6
+# ╠═8d754a53-ec27-4afe-bd62-8e9de763ece4
+# ╠═6616b702-1bf4-4df5-bb74-773d168125c2
+# ╠═9bb4c8ee-75f8-4ce3-8b67-200f48a55ed5
+# ╠═a3eb3595-514e-482c-a95d-067eaa751ce4
+# ╠═f0a1c792-bd41-41d2-a8b8-7a3ef70e0a7b
+# ╠═6272e43d-978b-41ef-942d-367d68456602
+# ╠═b58d5afe-8748-4d38-afbb-06de4045e698
+# ╠═4f6a1d1d-0d15-41c1-a8f9-c20e67106d92
+# ╠═b38e5061-b771-4ead-a5f7-550b16210d68
+# ╠═d13b243c-38a9-4ca7-a3e1-e458cc6be40e
+# ╠═8150e5d2-7ab1-41a1-9ca9-80a9dc254c17
+# ╠═9dd0b6e1-bcff-4b6d-835e-73907716cb1e
+# ╠═af38befb-1ae1-49e9-8dfb-575b21e8ef64
 # ╠═8c6880e4-32ec-4a5e-a29c-20120fa31fe6
 # ╠═fdf2a890-c75d-4255-85c7-bd3cc3e595c0
 # ╠═7471e01d-7b99-4000-9e53-a6e0ac83644a
@@ -1197,8 +1345,29 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═592ae9d2-5245-478f-b7e9-fbb8593ae3e7
 # ╠═772b145d-e949-475a-8dce-0d9db809aa71
 # ╠═42b1fafd-898d-48a4-bd9c-9e301b5af57e
+# ╠═4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
+# ╠═b87d6a15-89e2-4f1e-9e7e-aaa541bedd7e
 # ╠═4d101a73-6b77-4641-ba2d-645b66d3d713
+# ╠═eb4a1cea-aae1-4800-8f73-36f10af5b543
+# ╠═f48d6ddb-f81a-4ee6-8eac-8bab62769070
+# ╠═c0fad7ba-fd55-4b5d-bc30-87c00488ed99
+# ╠═c763e519-ade6-4272-a913-d0a11cb90fa5
+# ╠═e1c243f3-2b05-482d-8745-f3184e006b99
+# ╠═9a605a62-5a9b-46ba-916b-07ff6672287b
 # ╠═0ab826eb-1117-4b88-84a3-98cf19c976d1
+# ╠═98228370-6b93-47e4-8129-caa2dbe2f485
+# ╠═24995364-439e-4481-b120-e8627b58ffcc
+# ╠═ac1d692e-6967-429c-b562-c2be6d4b8a63
+# ╠═28d67a4b-abe8-46df-b6bb-2487dbf3e33e
+# ╠═3bcfd003-5c6f-4cd8-b9f1-60769cbc3d63
+# ╠═fad1b1f0-2052-43fb-9e77-f5bfb413f3e9
+# ╠═24198787-92e1-47d1-af6e-1a1403f458d8
+# ╠═851ed215-a8b4-41e7-9e73-36f6acf59a50
+# ╠═f3076f20-e98a-483f-a06e-9cb3ff5ccfdb
+# ╠═4785c17f-d1f7-4c57-a765-66df97781833
+# ╠═12201881-dd56-4316-bb0b-458cdeb758bb
+# ╠═14c4cdde-e483-4ebd-a561-457e713934b7
+# ╠═d8001506-4983-4738-826a-89e160f796ab
 # ╠═a98cae60-8751-4c64-90f6-9583d240aa01
 # ╠═5c3e8f2c-82b6-4bbd-9b10-95ba22030059
 # ╠═16a75f24-6f32-4867-becf-bf99921928bd
@@ -1212,9 +1381,6 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═ff00eba0-dd64-4f51-9746-7f848164edc3
 # ╠═aa001081-ee2c-4d48-84dd-c78229f8e71c
 # ╠═ab7e655d-114f-4c42-a295-b4c31119863c
-# ╠═4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
-# ╠═6194ef1d-65da-46f1-8bea-4c2db39a6c66
-# ╠═9e0a24ac-9cd5-48eb-bc31-9e73a81256cb
 # ╠═30fd63ec-0282-430b-9408-e3d77fb8aeed
 # ╠═dacbdbec-a43c-47bc-9f61-b2da6cecd3d6
 # ╠═173d8e66-79d9-4871-bbf5-7edd7138722e
