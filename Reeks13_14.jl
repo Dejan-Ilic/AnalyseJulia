@@ -518,9 +518,11 @@ md"## Reeks 14
 In deze reeks bekijken we een aantal voorbeelden van veelvoorkomende taken in Julia. We bekijken ook de syntax van Julia in meer detail.
 "
 
+# ╔═╡ 2ea91520-caa3-40ae-bbd4-8e122d253528
+md"### Basisfunctionaliteit"
+
 # ╔═╡ 0269c3bc-0c2e-4095-ac9b-af62429f74ec
-md"### Basisfunctionaliteit
-#### Elementaire functies en terminal output
+md"#### Elementaire functies en terminal output
 Het volgende programma demonstreert een aantal elementaire functies in Julia. Om de output van alle operaties te tonen, maken we gebruik van een `with_terminal() do ... end` blok, waarbinnen we de `println` functie gebruiken om resultaten weer te geven. In toekomstige versies van Pluto zal het weergeven van outputs met het `@info` macro gebeuren."
 
 # ╔═╡ 95996e61-4511-4fa9-88c6-a08b895359fa
@@ -549,7 +551,7 @@ Het volgende programma definieert een matrix en manipuleert die vervolgens. Om a
 
 
 # ╔═╡ 97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
-#TODO
+
 
 # ╔═╡ 72d0417c-de29-4b2a-af89-c74016fbf6ad
 md"#### Handige matrix functies
@@ -934,11 +936,47 @@ end
 
 # ╔═╡ 4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
 md"#### Recursieve functies
-Het volgende voorbeeld definieert twee functies die het `n`de getal uit de rij van Fibonacci berekenen.
+Het volgende voorbeeld definieert twee functies die het ``n``de getal uit de rij van Fibonacci berekenen.
 "
 
 # ╔═╡ b87d6a15-89e2-4f1e-9e7e-aaa541bedd7e
+function fibo_rec(n)
+	if n == 1 || n == 2
+		return 1
+	else
+		return fibo_rec(n-1) + fibo_rec(n-2)
+	end
+end
 
+# ╔═╡ 5f57dbcd-cd44-4481-a6c3-f35186541b27
+fibo_rec.(1:10) #de eerste 10
+
+# ╔═╡ f629deff-2380-439b-bafa-dfc34ac7717a
+function fibo_it(n)
+	if n == 1 || n == 2
+		return 1
+	end
+	
+	a = 1
+	b = 1
+	
+	for k=3:n
+		a, b = b, a+b
+	end
+	
+	return b
+end
+
+#alternatief voor
+		#a, b = b, a+b
+#is
+		#b_copy = b
+		#b = b + a
+		#a = b_copy
+		
+
+# ╔═╡ 52af5b18-b3b1-4d60-a318-817d39005027
+fibo_it.(1:10)
 
 # ╔═╡ 4d101a73-6b77-4641-ba2d-645b66d3d713
 md"### Gevorderde functionaliteit
@@ -1016,6 +1054,37 @@ zoek_in_lijst_v3(3, 99) #onzin
 
 # ╔═╡ f3076f20-e98a-483f-a06e-9cb3ff5ccfdb
 md"**Opmerking:** in Julia kun je ook je eigen types definiëren. Raadpleeg voor meer informatie de officiële Julia documentatie."
+
+# ╔═╡ c1d5d67a-e081-4d21-a85d-7e3ecc7f2c67
+md"Om na te gaan of een type `A` een subtype is van type `B` kun je
+
+`B <: A` 
+
+schrijven:"
+
+# ╔═╡ 288cf2bd-d68f-4394-bc26-6286c4cd9af3
+Int <: Float64
+
+# ╔═╡ e269a442-2416-45e5-9dd0-4d69a21f03a4
+Vector <: Array
+
+# ╔═╡ bb40b310-6de7-4939-a547-bfddf03ffb27
+Vector <: Matrix
+
+# ╔═╡ b4c712a3-ad94-42b5-9d5f-d61698603c3b
+Matrix <: Array
+
+# ╔═╡ 7505024d-5a38-4ce8-9355-afb10c367751
+Array <: AbstractArray
+
+# ╔═╡ 5cea7991-699e-4041-ab67-b9f985128007
+Vector <: AbstractArray
+
+# ╔═╡ 60f1dcaf-fcd4-4389-ba01-b02dfb1393d4
+typeof(LinRange(0,1,101)) <: AbstractArray
+
+# ╔═╡ afb44799-b4f9-4ccb-9362-0faf02ccac82
+typeof(1:9) <: AbstractArray
 
 # ╔═╡ 4785c17f-d1f7-4c57-a765-66df97781833
 md"**Opmerking:** in Julia kun je ook schrijven:"
@@ -1102,7 +1171,7 @@ end
 
 # ╔═╡ 68eea311-7d94-4fcb-a450-a9fde2651f5b
 function ik_ken_gewoon_de_formule(n)
-	return n*(n+1)/2
+	return n*(n+1)÷2
 end
 
 # ╔═╡ 0a9ed3d9-0366-4038-84d9-5f87e774faac
@@ -1124,13 +1193,19 @@ with_terminal() do #hebben we nodig om de output te zien
 end
 
 # ╔═╡ e9317e3d-e0f7-4a21-b74a-bfad3a64c14a
-md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het leren beheersen van de taal Julia is een lang proces, maar wel enorm bevredigend."
+md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het leren beheersen van de taal Julia is een lang proces, maar wel enorm bevredigend. Als laatste oefening kan je het verschil meten tussen de twee Fibonacci functies. Vul bij de recursieve versie wel geen waarde hoger dan 20 als je je computer deze week nog wilt gebruiken."
+
+# ╔═╡ 284fda9d-0cf9-4448-9011-3de1b10d366f
+#test fibo_rec
+
+# ╔═╡ eb385960-9e51-4f24-ba5c-81ebf6d4c830
+#test fibo_it
 
 # ╔═╡ Cell order:
 # ╟─065f9b00-ce70-11eb-1ee1-5d39cf5e39fc
 # ╟─c5d21e48-12e1-49e0-b1ac-1695c18fc7f2
 # ╟─47a2c712-dc44-4ff4-bdf6-0d78178812cb
-# ╟─b868460c-f229-4d0a-ac98-42e76cad1a1b
+# ╠═b868460c-f229-4d0a-ac98-42e76cad1a1b
 # ╟─301dfceb-77d6-4c35-b62a-ffbdb63133d7
 # ╠═250be0f8-db4b-48c5-8d96-f64acfd012d6
 # ╟─4a0c5464-12aa-4e44-bdcc-bc0facab94a7
@@ -1206,7 +1281,7 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═abf65b18-3d4d-4c3a-ae67-d9493ff38845
 # ╠═95b14d2c-d4d6-416f-a419-795e617b7996
 # ╠═3a812e19-acf8-4b56-ae8a-371d1feb456a
-# ╠═4b96e09f-e9b0-4551-816d-d930b497deba
+# ╟─4b96e09f-e9b0-4551-816d-d930b497deba
 # ╠═614a2f14-6a62-4255-8495-f6987dd7ead0
 # ╟─c0fbdac3-c250-4029-9ab6-70d8ea30aaa6
 # ╠═d956b439-dee4-4b51-a7b0-98fccd7bbf99
@@ -1247,19 +1322,20 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═51645a3c-51b8-47a7-b2dc-2bcdd356ca37
 # ╟─9cd2914a-e540-4131-8606-3533aaa16887
 # ╠═72f7d7a6-55ce-4ba2-97d3-99bae26f54b1
-# ╠═7b766daf-f703-4dfd-a09c-c7439078574a
-# ╠═0269c3bc-0c2e-4095-ac9b-af62429f74ec
-# ╠═95996e61-4511-4fa9-88c6-a08b895359fa
+# ╟─7b766daf-f703-4dfd-a09c-c7439078574a
+# ╟─2ea91520-caa3-40ae-bbd4-8e122d253528
+# ╟─0269c3bc-0c2e-4095-ac9b-af62429f74ec
+# ╟─95996e61-4511-4fa9-88c6-a08b895359fa
 # ╠═c6b4bdd7-8158-417c-92d6-5e1507228415
 # ╠═21a88921-8740-439e-8069-112d79014d2a
-# ╠═632d10c5-bd00-464d-bd56-8b899af525ef
+# ╟─632d10c5-bd00-464d-bd56-8b899af525ef
 # ╠═97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
-# ╠═72d0417c-de29-4b2a-af89-c74016fbf6ad
+# ╟─72d0417c-de29-4b2a-af89-c74016fbf6ad
 # ╠═b06f3f6c-d038-4fa2-b675-8ede7e6348b6
 # ╠═149eeb32-2e57-4ed6-9715-d0a4fe00cc22
 # ╠═a0d6706c-3e81-4454-872d-3d09f64bfcd6
 # ╠═db486089-cfba-4e85-927e-0428abb3a623
-# ╠═a790ef3a-f974-4080-897f-034823b594f1
+# ╟─a790ef3a-f974-4080-897f-034823b594f1
 # ╠═7c4cb8d8-d97c-473d-b2fc-3e583209ad03
 # ╠═eb1bc9a8-aab7-48ea-92cb-6b68d1561d29
 # ╠═75adcd97-cc6c-442d-9499-ff7a7b37405e
@@ -1270,51 +1346,51 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═d212b176-3c99-48c2-849a-a76be311b926
 # ╠═60e43fcf-4b7f-4a2e-a00e-596e18f7c035
 # ╠═99b9b962-18bf-403e-8df0-f595d481aed6
-# ╠═92f3665f-2ae9-41d6-81dd-5575f5e57acb
+# ╟─92f3665f-2ae9-41d6-81dd-5575f5e57acb
 # ╠═789d0bc6-235d-433f-be4d-f9200fb94a71
 # ╠═b0e3f7e3-c8a7-42c8-acd9-78bedc707a65
 # ╠═40874524-624a-44ed-b343-9c3e0cfe5ce0
-# ╠═7fc47001-03c6-41da-8f64-3a32fb59f24c
+# ╟─7fc47001-03c6-41da-8f64-3a32fb59f24c
 # ╠═4ecb91bb-ccba-4d19-932f-2f48e214e941
 # ╠═ff84efe5-f520-4bac-bcac-4ed88f5e27b0
 # ╠═be2aa742-17af-4ab4-bffe-5d210fe6f125
-# ╠═52e296ef-138a-4be8-8317-47d790e57edd
+# ╟─52e296ef-138a-4be8-8317-47d790e57edd
 # ╠═75ab63d4-553d-422e-9049-339b1d7f7610
-# ╠═7b01db27-3dd4-42e6-b4aa-442d2266670e
+# ╟─7b01db27-3dd4-42e6-b4aa-442d2266670e
 # ╠═af8ede65-5d83-4090-b800-b5c3982034db
-# ╠═11eb6987-be85-4b48-8ad7-78d5df97c9d8
+# ╟─11eb6987-be85-4b48-8ad7-78d5df97c9d8
 # ╠═4e105db0-0f54-4595-9c9d-12695d35769c
 # ╠═869a2652-17bc-4c45-b47b-1bf0d5176a92
-# ╠═96c73a3a-d4c2-464a-96ee-6c0fda12b5eb
+# ╟─96c73a3a-d4c2-464a-96ee-6c0fda12b5eb
 # ╠═0df0ab28-b31b-4b38-b0df-0ff5fb1b7574
-# ╠═681d5693-614f-4ac1-a3b2-7328bcfe18e2
+# ╟─681d5693-614f-4ac1-a3b2-7328bcfe18e2
 # ╠═4b3998d1-2d04-4bb1-8aa5-8a78e702a339
-# ╠═5f37de56-bb6e-4811-9160-99f1b63e0875
+# ╟─5f37de56-bb6e-4811-9160-99f1b63e0875
 # ╠═8897a771-2e72-4e9c-bddb-fccbdbfd79f0
 # ╠═63bcdad7-c80d-4e41-91f1-44a7642de620
-# ╠═4a34938b-8e6e-4da4-a2f9-e357ca331b19
+# ╟─4a34938b-8e6e-4da4-a2f9-e357ca331b19
 # ╠═9612e89f-e061-46f3-b0b9-ee199da16c08
-# ╠═465e3893-ede1-4e79-a719-3b576e736698
+# ╟─465e3893-ede1-4e79-a719-3b576e736698
 # ╠═88c17f24-4fb3-4e48-9a35-21f2650d31a3
-# ╠═f5c595b2-c48a-4373-960b-9aa25d70dc55
+# ╟─f5c595b2-c48a-4373-960b-9aa25d70dc55
 # ╠═81467415-4954-4fdc-b77a-8416d5c65c00
 # ╠═f1df2d03-26c8-4a9a-9fd5-4c861995cd33
 # ╠═0a9c54bb-682b-48b1-9b38-a95b63e523d1
-# ╠═2a0f9be5-ad48-4d79-95eb-cdb8603cf586
+# ╟─2a0f9be5-ad48-4d79-95eb-cdb8603cf586
 # ╠═7a2ea1cc-139c-4cd7-b928-245350139d63
-# ╠═b557c766-dcb2-4a14-b31e-cd29a9c5ad84
-# ╠═c83f7804-a5ea-4bcf-b2c8-4b0f6e4f35c5
+# ╟─b557c766-dcb2-4a14-b31e-cd29a9c5ad84
+# ╟─c83f7804-a5ea-4bcf-b2c8-4b0f6e4f35c5
 # ╠═3a99038b-f999-4cd6-abb1-8a03b1449521
-# ╠═76d22458-b22e-4af9-9edb-bf0f6b855e35
+# ╟─76d22458-b22e-4af9-9edb-bf0f6b855e35
 # ╠═e87f73a3-b031-495b-8e87-97cbd2812b24
 # ╠═67a7ab60-108b-4dc7-8d08-853f81905de9
 # ╠═9fed9a56-ac7f-4e95-aea9-b6565d93fc7c
-# ╠═96a2714f-1550-4d60-a7ac-d616e3f1a83c
+# ╟─96a2714f-1550-4d60-a7ac-d616e3f1a83c
 # ╠═9a38cc68-9c09-4769-929f-4410e6026252
 # ╠═5e08546c-6ea8-46cf-a69f-c14a58820bff
 # ╠═b4e8a22f-ad01-402f-8821-8a8ba84b1217
 # ╠═0206b776-00af-42f8-9e84-1f57c5d9dcb2
-# ╠═bbe81be5-e34d-4696-9696-d738b2113f85
+# ╟─bbe81be5-e34d-4696-9696-d738b2113f85
 # ╠═dd70c88b-32b7-4ca9-8a9e-f9eea8489f92
 # ╠═565684f6-3af4-43e5-928f-69b0c49d127f
 # ╠═eedbef48-8576-4760-a3d8-62d541844a37
@@ -1324,70 +1400,84 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═6616b702-1bf4-4df5-bb74-773d168125c2
 # ╠═9bb4c8ee-75f8-4ce3-8b67-200f48a55ed5
 # ╠═a3eb3595-514e-482c-a95d-067eaa751ce4
-# ╠═f0a1c792-bd41-41d2-a8b8-7a3ef70e0a7b
+# ╟─f0a1c792-bd41-41d2-a8b8-7a3ef70e0a7b
 # ╠═6272e43d-978b-41ef-942d-367d68456602
 # ╠═b58d5afe-8748-4d38-afbb-06de4045e698
-# ╠═4f6a1d1d-0d15-41c1-a8f9-c20e67106d92
+# ╟─4f6a1d1d-0d15-41c1-a8f9-c20e67106d92
 # ╠═b38e5061-b771-4ead-a5f7-550b16210d68
-# ╠═d13b243c-38a9-4ca7-a3e1-e458cc6be40e
+# ╟─d13b243c-38a9-4ca7-a3e1-e458cc6be40e
 # ╠═8150e5d2-7ab1-41a1-9ca9-80a9dc254c17
 # ╠═9dd0b6e1-bcff-4b6d-835e-73907716cb1e
 # ╠═af38befb-1ae1-49e9-8dfb-575b21e8ef64
-# ╠═8c6880e4-32ec-4a5e-a29c-20120fa31fe6
+# ╟─8c6880e4-32ec-4a5e-a29c-20120fa31fe6
 # ╠═fdf2a890-c75d-4255-85c7-bd3cc3e595c0
 # ╠═7471e01d-7b99-4000-9e53-a6e0ac83644a
-# ╠═835d59cf-73ea-4d85-a4cf-27f4b04f77e3
+# ╟─835d59cf-73ea-4d85-a4cf-27f4b04f77e3
 # ╠═71b7de70-4136-48d5-9399-f07e34409dbe
 # ╠═8b0b7513-1271-4519-b525-202a1f46360d
 # ╠═b8b25044-e09c-4cec-a58e-92c2aadfca1d
 # ╠═55640801-146a-45a6-8d74-e0ea36aac298
-# ╠═aee01040-4a40-443c-be11-e42cba1ac525
+# ╟─aee01040-4a40-443c-be11-e42cba1ac525
 # ╠═592ae9d2-5245-478f-b7e9-fbb8593ae3e7
-# ╠═772b145d-e949-475a-8dce-0d9db809aa71
+# ╟─772b145d-e949-475a-8dce-0d9db809aa71
 # ╠═42b1fafd-898d-48a4-bd9c-9e301b5af57e
-# ╠═4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
+# ╟─4b0d55e8-9b16-47a6-b0fd-62c8a13df7de
 # ╠═b87d6a15-89e2-4f1e-9e7e-aaa541bedd7e
-# ╠═4d101a73-6b77-4641-ba2d-645b66d3d713
+# ╠═5f57dbcd-cd44-4481-a6c3-f35186541b27
+# ╠═f629deff-2380-439b-bafa-dfc34ac7717a
+# ╠═52af5b18-b3b1-4d60-a318-817d39005027
+# ╟─4d101a73-6b77-4641-ba2d-645b66d3d713
 # ╠═eb4a1cea-aae1-4800-8f73-36f10af5b543
-# ╠═f48d6ddb-f81a-4ee6-8eac-8bab62769070
+# ╟─f48d6ddb-f81a-4ee6-8eac-8bab62769070
 # ╠═c0fad7ba-fd55-4b5d-bc30-87c00488ed99
 # ╠═c763e519-ade6-4272-a913-d0a11cb90fa5
-# ╠═e1c243f3-2b05-482d-8745-f3184e006b99
+# ╟─e1c243f3-2b05-482d-8745-f3184e006b99
 # ╠═9a605a62-5a9b-46ba-916b-07ff6672287b
 # ╠═0ab826eb-1117-4b88-84a3-98cf19c976d1
 # ╠═98228370-6b93-47e4-8129-caa2dbe2f485
-# ╠═24995364-439e-4481-b120-e8627b58ffcc
+# ╟─24995364-439e-4481-b120-e8627b58ffcc
 # ╠═ac1d692e-6967-429c-b562-c2be6d4b8a63
-# ╠═28d67a4b-abe8-46df-b6bb-2487dbf3e33e
+# ╟─28d67a4b-abe8-46df-b6bb-2487dbf3e33e
 # ╠═3bcfd003-5c6f-4cd8-b9f1-60769cbc3d63
 # ╠═fad1b1f0-2052-43fb-9e77-f5bfb413f3e9
-# ╠═24198787-92e1-47d1-af6e-1a1403f458d8
+# ╟─24198787-92e1-47d1-af6e-1a1403f458d8
 # ╠═851ed215-a8b4-41e7-9e73-36f6acf59a50
-# ╠═f3076f20-e98a-483f-a06e-9cb3ff5ccfdb
-# ╠═4785c17f-d1f7-4c57-a765-66df97781833
+# ╟─f3076f20-e98a-483f-a06e-9cb3ff5ccfdb
+# ╟─c1d5d67a-e081-4d21-a85d-7e3ecc7f2c67
+# ╠═288cf2bd-d68f-4394-bc26-6286c4cd9af3
+# ╠═e269a442-2416-45e5-9dd0-4d69a21f03a4
+# ╠═bb40b310-6de7-4939-a547-bfddf03ffb27
+# ╠═b4c712a3-ad94-42b5-9d5f-d61698603c3b
+# ╠═7505024d-5a38-4ce8-9355-afb10c367751
+# ╠═5cea7991-699e-4041-ab67-b9f985128007
+# ╠═60f1dcaf-fcd4-4389-ba01-b02dfb1393d4
+# ╠═afb44799-b4f9-4ccb-9362-0faf02ccac82
+# ╟─4785c17f-d1f7-4c57-a765-66df97781833
 # ╠═12201881-dd56-4316-bb0b-458cdeb758bb
 # ╠═14c4cdde-e483-4ebd-a561-457e713934b7
 # ╠═d8001506-4983-4738-826a-89e160f796ab
-# ╠═a98cae60-8751-4c64-90f6-9583d240aa01
+# ╟─a98cae60-8751-4c64-90f6-9583d240aa01
 # ╠═5c3e8f2c-82b6-4bbd-9b10-95ba22030059
 # ╠═16a75f24-6f32-4867-becf-bf99921928bd
-# ╠═a62695a3-0cb5-45cf-9068-a9124a9e40cf
+# ╟─a62695a3-0cb5-45cf-9068-a9124a9e40cf
 # ╠═d00142d9-76bd-4d08-8a28-c8f8c52a30ee
-# ╠═5d79a823-d7bb-42f4-983f-dca60a3999ba
+# ╟─5d79a823-d7bb-42f4-983f-dca60a3999ba
 # ╠═4bd3d80c-932f-46a2-870f-99fc00f26ae7
-# ╠═353eb275-3c22-492a-850a-11012004422e
+# ╟─353eb275-3c22-492a-850a-11012004422e
 # ╠═c462b1fa-bc51-4b35-aec1-804d658de957
-# ╠═6c07ec9e-5fcf-495a-8759-bf743f93daa9
+# ╟─6c07ec9e-5fcf-495a-8759-bf743f93daa9
 # ╠═ff00eba0-dd64-4f51-9746-7f848164edc3
-# ╠═aa001081-ee2c-4d48-84dd-c78229f8e71c
-# ╠═ab7e655d-114f-4c42-a295-b4c31119863c
-# ╠═30fd63ec-0282-430b-9408-e3d77fb8aeed
+# ╟─aa001081-ee2c-4d48-84dd-c78229f8e71c
+# ╟─ab7e655d-114f-4c42-a295-b4c31119863c
+# ╟─30fd63ec-0282-430b-9408-e3d77fb8aeed
 # ╠═dacbdbec-a43c-47bc-9f61-b2da6cecd3d6
 # ╠═173d8e66-79d9-4871-bbf5-7edd7138722e
 # ╠═1c3bd18e-384b-4595-aefd-0bc60ebf1a8a
 # ╠═68eea311-7d94-4fcb-a450-a9fde2651f5b
-# ╠═0a9ed3d9-0366-4038-84d9-5f87e774faac
+# ╟─0a9ed3d9-0366-4038-84d9-5f87e774faac
 # ╠═b289b895-f9c0-4942-b43e-536700dca28b
 # ╠═9c5b918f-0011-4703-b14d-af63269fbe14
 # ╠═be1102d0-3a00-4a21-8731-f277fe408b01
-# ╠═e9317e3d-e0f7-4a21-b74a-bfad3a64c14a
+# ╟─e9317e3d-e0f7-4a21-b74a-bfad3a64c14a
+# ╠═284fda9d-0cf9-4448-9011-3de1b10d366f
+# ╠═eb385960-9e51-4f24-ba5c-81ebf6d4c830
