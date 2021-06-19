@@ -10,9 +10,6 @@ using Pkg #de Pkg package stelt ons in staat om binnen Julia packages te install
 # ╔═╡ 22410d92-2b7e-4a3f-8190-79b5562b4289
 using Plots #Julia heeft een aantal Plot packages, voorlopig lijkt "Plots" de interessantste, maar "Makie" is ook interessant. Plots is wel berucht om zijn trage opstarttijd.
 
-# ╔═╡ c6b4bdd7-8158-417c-92d6-5e1507228415
-using PlutoUI
-
 # ╔═╡ 789d0bc6-235d-433f-be4d-f9200fb94a71
 using LinearAlgebra
 
@@ -523,35 +520,81 @@ md"### Basisfunctionaliteit"
 
 # ╔═╡ 0269c3bc-0c2e-4095-ac9b-af62429f74ec
 md"#### Elementaire functies en terminal output
-Het volgende programma demonstreert een aantal elementaire functies in Julia. Om de output van alle operaties te tonen, maken we gebruik van een `with_terminal() do ... end` blok, waarbinnen we de `println` functie gebruiken om resultaten weer te geven. In toekomstige versies van Pluto zal het weergeven van outputs met het `@info` macro gebeuren."
+Het volgende programma demonstreert een aantal elementaire functies in Julia."
 
-# ╔═╡ 95996e61-4511-4fa9-88c6-a08b895359fa
-md"Als de volgende cel een error geeft, is dat omdat je `PlutoUI` nog niet hebt geïnstalleerd. `PlutoUI` is nodig om de terminal outputs weer te geven. Maak een nieuwe cel aan waarin je eerst `PlutoUI` installeert en vervolgens importeert."
+# ╔═╡ e4a99736-a706-489c-99a3-fc50b04d73f1
+sqrt(25)
 
-# ╔═╡ 21a88921-8740-439e-8069-112d79014d2a
-with_terminal() do
-	println("sqrt(25) = ", sqrt(25))
-	println("cbrt(64) = ", cbrt(64))
-	println("exp(10) = ", exp(10))
-	println("log2(64) = ", log2(64))
-	println("log10(1000) = ", log10(1000))
-	println("log(exp(4)) = ", log(exp(4)))
-	println("conj(8 - 5im) = ", conj(8 - 5im))
-	println("abs(3 + 4im) = ", abs(3 + 4im))
-	println("angle(3 + 4im) = ", angle(3 + 4im))
-	println("abs(3 + 4im) * exp(angle(3+4im)im) = ", abs(3 + 4im) * exp(angle(3+4im)im))
-	println("24÷5 = ", 24÷5)
-	println("24/5 = ", 24/5)
-end
+# ╔═╡ b0dbedbb-993a-4406-ade0-dbe3d83eb626
+cbrt(64)
+
+# ╔═╡ 0398cfd3-4b37-4c16-a2bd-de8764ec4dec
+exp(10)
+
+# ╔═╡ 3dbb2f16-9639-4242-9777-4152d65b87cf
+log2(64)
+
+# ╔═╡ 875ad7bc-edfe-4db4-8a55-524df9cbefc8
+log10(1000)
+
+# ╔═╡ 14d9a28d-fb1e-4ded-acd9-9e9ad92396b4
+log(exp(4))
+
+# ╔═╡ 7c21e16a-cd54-4747-8884-ad69c3696734
+conj(8 - 5im)
+
+# ╔═╡ 5e623855-b9fe-42bc-84b1-49406114b0ef
+abs(3 + 4im)
+
+# ╔═╡ 680fb1fa-ac22-4567-8267-7087952a15c9
+angle(3 + 4im)
+
+# ╔═╡ e66a28d7-0782-4734-8aaa-c8bd458b4cb0
+abs(3 + 4im) * exp(angle(3 + 4im) * im)
+
+# ╔═╡ 0ecee778-4da4-4a19-a8f2-6e28defc995b
+24/5
+
+# ╔═╡ a1f70fa6-0ec0-4891-9b67-31bacdb2b1e1
+24÷5 #\div<TAB>
+
+# ╔═╡ a2bfc8d6-e31c-41b4-9f8f-fcc0d88cf83b
+24%5
 
 # ╔═╡ 632d10c5-bd00-464d-bd56-8b899af525ef
 md"#### Matrix slicing en puntsgewijze assignments
-Het volgende programma definieert een matrix en manipuleert die vervolgens. Om alle stappen van het programma te begrijpen kun je opnieuw een `with_terminal()` blok gebruiken, of alle lijnen na lijn ``n`` wegcommentariëren zodat de ``n``de lijn de laatste expressie is binnen het `let` blok.
+Het volgende programma definieert een matrix `Q` en manipuleert die vervolgens. 
 "
 
-
 # ╔═╡ 97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
+Q = [3 3 3; 4 4 5; 1 3 3]
 
+# ╔═╡ ad0b9bb4-e701-461f-b23b-03581ab91891
+Q[1:2:3, 1:2:3] .= 0 #de hoeken naar 0
+
+# ╔═╡ 680937d2-5d0d-4872-8900-797e964e7ab5
+Q
+
+# ╔═╡ 82a8a87d-50e6-4bea-bacd-45c384601a2c
+Q .= Q'
+
+# ╔═╡ 678e4212-9611-47fd-b3cc-310683fdadbd
+Q[2, 1:3] -= Q[1, 1:3]
+
+# ╔═╡ d3c6b8d6-69d7-44c6-9162-af28a3d72b8f
+Q
+
+# ╔═╡ 31ac6378-22b5-4c4c-92cf-562b2d5b8123
+Q[2, 1:2:3] .÷= Q[2, 1:2:3] #deel de middelste rij, behalve het centrum, puntsgewijs door zichzelf (gehele deling)
+
+# ╔═╡ b6b64b80-6333-4579-9f2c-f25c53a27848
+Q
+
+# ╔═╡ d350e5d2-90fb-4212-a183-3999870ff9e5
+Q[3, 2] -= Q[1,2]
+
+# ╔═╡ 15da6d3c-bad9-4900-849c-24e3d50c8814
+Q
 
 # ╔═╡ 72d0417c-de29-4b2a-af89-c74016fbf6ad
 md"#### Handige matrix functies
@@ -1175,7 +1218,12 @@ function ik_ken_gewoon_de_formule(n)
 end
 
 # ╔═╡ 0a9ed3d9-0366-4038-84d9-5f87e774faac
-md"We gebruiken het macro `@btime` om de daaropvolgende expressie een aantal keer uit te voeren en de gemiddelde uitvoeringstijd te meten alsook het geheugengebruik."
+md"""We gebruiken het macro `@btime` om de daaropvolgende expressie een aantal keer uit te voeren en de gemiddelde uitvoeringstijd te meten alsook het geheugengebruik. `@btime` plaatst die output dan in de terminal waarin je Pluto gestart hebt. Om die output toch binnen Pluto te "vangen", moeten we de `@btime` omsluiten in een `with_terminal() do ... end` blok."""
+
+# ╔═╡ 446744c1-862d-4ca7-8546-bfb9d9634bfa
+md"Als de volgende cel een error geeft, is dat omdat de functie `with_terminal` een onderdeel is van de `PlutoUI` package, en je die laatste nog niet hebt geïnstalleerd. 
+
+Maak een nieuwe cel aan waarin je eerst `PlutoUI` installeert en vervolgens importeert."
 
 # ╔═╡ b289b895-f9c0-4942-b43e-536700dca28b
 with_terminal() do #hebben we nodig om de output te zien
@@ -1324,12 +1372,31 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═72f7d7a6-55ce-4ba2-97d3-99bae26f54b1
 # ╟─7b766daf-f703-4dfd-a09c-c7439078574a
 # ╟─2ea91520-caa3-40ae-bbd4-8e122d253528
-# ╟─0269c3bc-0c2e-4095-ac9b-af62429f74ec
-# ╟─95996e61-4511-4fa9-88c6-a08b895359fa
-# ╠═c6b4bdd7-8158-417c-92d6-5e1507228415
-# ╠═21a88921-8740-439e-8069-112d79014d2a
+# ╠═0269c3bc-0c2e-4095-ac9b-af62429f74ec
+# ╠═e4a99736-a706-489c-99a3-fc50b04d73f1
+# ╠═b0dbedbb-993a-4406-ade0-dbe3d83eb626
+# ╠═0398cfd3-4b37-4c16-a2bd-de8764ec4dec
+# ╠═3dbb2f16-9639-4242-9777-4152d65b87cf
+# ╠═875ad7bc-edfe-4db4-8a55-524df9cbefc8
+# ╠═14d9a28d-fb1e-4ded-acd9-9e9ad92396b4
+# ╠═7c21e16a-cd54-4747-8884-ad69c3696734
+# ╠═5e623855-b9fe-42bc-84b1-49406114b0ef
+# ╠═680fb1fa-ac22-4567-8267-7087952a15c9
+# ╠═e66a28d7-0782-4734-8aaa-c8bd458b4cb0
+# ╠═0ecee778-4da4-4a19-a8f2-6e28defc995b
+# ╠═a1f70fa6-0ec0-4891-9b67-31bacdb2b1e1
+# ╠═a2bfc8d6-e31c-41b4-9f8f-fcc0d88cf83b
 # ╟─632d10c5-bd00-464d-bd56-8b899af525ef
 # ╠═97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
+# ╠═ad0b9bb4-e701-461f-b23b-03581ab91891
+# ╠═680937d2-5d0d-4872-8900-797e964e7ab5
+# ╠═82a8a87d-50e6-4bea-bacd-45c384601a2c
+# ╠═678e4212-9611-47fd-b3cc-310683fdadbd
+# ╠═d3c6b8d6-69d7-44c6-9162-af28a3d72b8f
+# ╠═31ac6378-22b5-4c4c-92cf-562b2d5b8123
+# ╠═b6b64b80-6333-4579-9f2c-f25c53a27848
+# ╠═d350e5d2-90fb-4212-a183-3999870ff9e5
+# ╠═15da6d3c-bad9-4900-849c-24e3d50c8814
 # ╟─72d0417c-de29-4b2a-af89-c74016fbf6ad
 # ╠═b06f3f6c-d038-4fa2-b675-8ede7e6348b6
 # ╠═149eeb32-2e57-4ed6-9715-d0a4fe00cc22
@@ -1475,6 +1542,7 @@ md"De verschillen zijn gigantisch, zowel in tijd als in geheugengebruik. Het ler
 # ╠═1c3bd18e-384b-4595-aefd-0bc60ebf1a8a
 # ╠═68eea311-7d94-4fcb-a450-a9fde2651f5b
 # ╟─0a9ed3d9-0366-4038-84d9-5f87e774faac
+# ╟─446744c1-862d-4ca7-8546-bfb9d9634bfa
 # ╠═b289b895-f9c0-4942-b43e-536700dca28b
 # ╠═9c5b918f-0011-4703-b14d-af63269fbe14
 # ╠═be1102d0-3a00-4a21-8731-f277fe408b01
