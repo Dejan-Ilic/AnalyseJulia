@@ -99,7 +99,7 @@ md"Om een gehele deling uit te voeren tussen twee `Int` waarden, gebruik je `÷`
 var4÷3
 
 # ╔═╡ 7218f1f9-79cd-4f09-9062-4e4067ab8907
-md"Om de rest van de gehele deling te verkrijgen gebruik je de zogehete module operator, **%**"
+md"Om de rest van de gehele deling te verkrijgen gebruik je de zogehete modulo operator, **%**"
 
 # ╔═╡ 023f4cec-a9d8-4917-bd3a-82671810b7dc
 8%3
@@ -366,7 +366,7 @@ md"Julia biedt ons aantal handige `range` objecten aan die ons het plotten verge
 let 
 	x = 0:5
 	y = x.^2 .+ 3*x .- 2 #let op de dot syntax!
-	plot(x,y)
+	plot(x,y, framestyle=:origin) 
 end
 
 # ╔═╡ 81dace0a-1bfd-48fb-9cb0-4f38fb3e843b
@@ -568,38 +568,40 @@ abs(3 + 4im) * exp(angle(3 + 4im) * im)
 
 # ╔═╡ 632d10c5-bd00-464d-bd56-8b899af525ef
 md"#### Matrix slicing en puntsgewijze assignments
-Het volgende programma definieert een matrix `Q` en manipuleert die vervolgens. 
+Het volgende programma definieert een matrix `Q` en manipuleert die vervolgens. We voeren de manipulatie van `Q` uit binnen een `begin` blok. Als we `Q` zouden definiëren in 1 cel en zouden aanpassen in een andere cel, kan dat onverwachte resultaten opleveren omdat Pluto een *reactieve* notebook is, en het aanpassen van een cel leidt tot automatische updates van alle cellen die van de eerste cel afhankelijk zijn.
 "
 
 # ╔═╡ 97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
-Q = [3 3 3; 4 4 5; 1 3 3]
+begin
+	Q = [3 3 3; 4 4 5; 1 3 3]
+	@info "De matrix Q"
+	@info Q #print Q
+	
+	Q[1:2:3, 1:2:3] .= 0 #de hoeken naar 0
+	@info "de hoeken naar 0"
+	@info Q
 
-# ╔═╡ ad0b9bb4-e701-461f-b23b-03581ab91891
-Q[1:2:3, 1:2:3] .= 0 #de hoeken naar 0
+	Q .= Q' #stel Q gelijk aan zijn getransponeerde
+	@info "Q^T"
+	@info Q
 
-# ╔═╡ 680937d2-5d0d-4872-8900-797e964e7ab5
-Q
+	Q[2, 1:3] -= Q[1, 1:3]
+	@info "Trek de eerste rij van de tweede rij af"
+	@info Q
 
-# ╔═╡ 82a8a87d-50e6-4bea-bacd-45c384601a2c
-Q .= Q'
+	Q[2, 1:2:3] .÷= Q[2, 1:2:3] #deel de middelste rij, behalve het centrum, puntsgewijs door zichzelf (gehele deling)
+	@info "Deel rij 2"
+	@info Q
 
-# ╔═╡ 678e4212-9611-47fd-b3cc-310683fdadbd
-Q[2, 1:3] -= Q[1, 1:3]
+	Q[3, 2] -= Q[1,2]
+	@info "trek Q[1,2] van Q[3,2] af"
+	@info Q
+end
 
-# ╔═╡ d3c6b8d6-69d7-44c6-9162-af28a3d72b8f
-Q
+# ╔═╡ 6190af3c-775b-4a45-9dad-3f2816afb79b
+md"Als je met je muis over de outputs beweegt, dan duidt Pluto de regel code aan die die output geproduceerd heeft.
 
-# ╔═╡ 31ac6378-22b5-4c4c-92cf-562b2d5b8123
-Q[2, 1:2:3] .÷= Q[2, 1:2:3] #deel de middelste rij, behalve het centrum, puntsgewijs door zichzelf (gehele deling)
-
-# ╔═╡ b6b64b80-6333-4579-9f2c-f25c53a27848
-Q
-
-# ╔═╡ d350e5d2-90fb-4212-a183-3999870ff9e5
-Q[3, 2] -= Q[1,2]
-
-# ╔═╡ 15da6d3c-bad9-4900-849c-24e3d50c8814
-Q
+In plaats van het *macro* `@info` kun je ook de *functie* `println` gebruiken om tussentijdse resultaten weer te geven, maar `@info` ziet er mooier uit in Pluto notebooks. Merk op dat in tegelstelling tot de *returnwaarde* van een cel, de outputs van `@info` wel onder de cel terechtkomen."
 
 # ╔═╡ 72d0417c-de29-4b2a-af89-c74016fbf6ad
 md"#### Handige matrix functies
@@ -1150,7 +1152,7 @@ md"**Opmerking:** in Julia kun je ook schrijven:"
 33 in [1 2 5 9 1 3]
 
 # ╔═╡ d8001506-4983-4738-826a-89e160f796ab
-3 ∈ [1 2 5 9 1 3]
+3 ∈ [1 2 5 9 1 3] #∈ = \in<TAB>
 
 # ╔═╡ a98cae60-8751-4c64-90f6-9583d240aa01
 md"""#### Pipes
@@ -1175,7 +1177,7 @@ md"We kunnen dit ook op een lijn schrijven, door het onmiddellijk achter elkaar 
 data5 = sum(sqrt.(abs.(reverse(data))))
 
 # ╔═╡ 5d79a823-d7bb-42f4-983f-dca60a3999ba
-md"Dit niet zo leesbaar meer voor onze Westerse ogen, aangezien we de functies van rechts naar links moeten uitvoeren. Julia heeft hier natuurlijk een elegante oplossing voor: de pipe operator `|>` en zijn elementsgewijze variant `.|>`:"
+md"Dit niet zo leesbaar meer, aangezien we de functies van rechts naar links moeten uitvoeren. Julia heeft hier natuurlijk een elegante oplossing voor: de pipe operator `|>` en zijn elementsgewijze variant `.|>`:"
 
 # ╔═╡ 4bd3d80c-932f-46a2-870f-99fc00f26ae7
 data |> reverse .|> abs .|> sqrt |> sum
@@ -1196,7 +1198,7 @@ data |> reverse .|> abs .|> sqrt .|> (x -> x^3) |> sum |> (x -> round(x, digits=
 md"Natuurlijk gebruik je liefst zo veel mogelijk niet-annonieme functies om je programma leesbaar te houden!"
 
 # ╔═╡ ab7e655d-114f-4c42-a295-b4c31119863c
-md"""**Opmerking:** de Julia community voert momenteel een debat om de vaak gebruikte notatie
+md"""**Opmerking:** de Julia community voert momenteel een (verhit) debat om de vaak gebruikte notatie
 
 `... |> (x -> f(x, arg1, arg2, ...)) |> ...`
 
@@ -1229,7 +1231,7 @@ function ik_ken_gewoon_de_formule(n)
 end
 
 # ╔═╡ 0a9ed3d9-0366-4038-84d9-5f87e774faac
-md"""We gebruiken het macro `@btime` om de daaropvolgende expressie een aantal keer uit te voeren en de gemiddelde uitvoeringstijd te meten alsook het geheugengebruik. `@btime` plaatst die output dan in de terminal waarin je Pluto gestart hebt. Verwijder het hekje (#) in de volgende 3 cell om ze uit te voeren. """
+md"""We gebruiken het macro `@btime` om de daaropvolgende expressie een aantal keer uit te voeren en de gemiddelde uitvoeringstijd te meten alsook het geheugengebruik.  Verwijder het hekje (#) in de volgende 3 cell om ze uit te voeren. """
 
 # ╔═╡ b289b895-f9c0-4942-b43e-536700dca28b
 #@btime slowsum(1_000_000)
@@ -1296,7 +1298,7 @@ uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
 version = "1.0.8+0"
 
 [[Cairo_jll]]
-deps = ["Artifacts", "Bzip2_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
+deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
 git-tree-sha1 = "4b859a208b2397a7a623a03449e4636bdb17bcf2"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+1"
@@ -1600,9 +1602,9 @@ version = "1.42.0+0"
 
 [[Libiconv_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "42b62845d70a619f063a7da093d995ec8e15e778"
+git-tree-sha1 = "c7cb1f5d892775ba13767a87c7ada0b980ea0a71"
 uuid = "94ce4f54-9a6c-5748-9c1c-f9c7231a4531"
-version = "1.16.1+1"
+version = "1.16.1+2"
 
 [[Libmount_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -2249,15 +2251,7 @@ version = "0.9.1+5"
 # ╠═a2bfc8d6-e31c-41b4-9f8f-fcc0d88cf83b
 # ╟─632d10c5-bd00-464d-bd56-8b899af525ef
 # ╠═97a081f0-f0c6-48f2-ae4e-8e3ff5b99ff4
-# ╠═ad0b9bb4-e701-461f-b23b-03581ab91891
-# ╠═680937d2-5d0d-4872-8900-797e964e7ab5
-# ╠═82a8a87d-50e6-4bea-bacd-45c384601a2c
-# ╠═678e4212-9611-47fd-b3cc-310683fdadbd
-# ╠═d3c6b8d6-69d7-44c6-9162-af28a3d72b8f
-# ╠═31ac6378-22b5-4c4c-92cf-562b2d5b8123
-# ╠═b6b64b80-6333-4579-9f2c-f25c53a27848
-# ╠═d350e5d2-90fb-4212-a183-3999870ff9e5
-# ╠═15da6d3c-bad9-4900-849c-24e3d50c8814
+# ╟─6190af3c-775b-4a45-9dad-3f2816afb79b
 # ╟─72d0417c-de29-4b2a-af89-c74016fbf6ad
 # ╠═b06f3f6c-d038-4fa2-b675-8ede7e6348b6
 # ╠═149eeb32-2e57-4ed6-9715-d0a4fe00cc22
@@ -2404,11 +2398,11 @@ version = "0.9.1+5"
 # ╠═173d8e66-79d9-4871-bbf5-7edd7138722e
 # ╠═1c3bd18e-384b-4595-aefd-0bc60ebf1a8a
 # ╠═68eea311-7d94-4fcb-a450-a9fde2651f5b
-# ╠═0a9ed3d9-0366-4038-84d9-5f87e774faac
+# ╟─0a9ed3d9-0366-4038-84d9-5f87e774faac
 # ╠═b289b895-f9c0-4942-b43e-536700dca28b
 # ╠═9c5b918f-0011-4703-b14d-af63269fbe14
 # ╠═be1102d0-3a00-4a21-8731-f277fe408b01
-# ╠═e9317e3d-e0f7-4a21-b74a-bfad3a64c14a
+# ╟─e9317e3d-e0f7-4a21-b74a-bfad3a64c14a
 # ╠═284fda9d-0cf9-4448-9011-3de1b10d366f
 # ╠═eb385960-9e51-4f24-ba5c-81ebf6d4c830
 # ╟─00000000-0000-0000-0000-000000000001
